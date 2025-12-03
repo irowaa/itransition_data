@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenue Analytics Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .metric-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            height: 100%;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .metric-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 500;
+            padding: 1rem 2rem;
+        }
+        .nav-tabs .nav-link.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            background: transparent;
+        }
+        .tab-pane {
+            padding: 2rem 0;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        .list-group-item {
+            border: none;
+            border-left: 4px solid #667eea;
+            margin-bottom: 0.5rem;
+        }
+        .badge-custom {
+            background: #667eea;
+            color: white;
+        }
+        .author-badge {
+            background: #e9ecef;
+            color: #495057;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+        .buyer-badge {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+        .day-rank-1 { border-left-color: #dc3545 !important; }
+        .day-rank-2 { border-left-color: #fd7e14 !important; }
+        .day-rank-3 { border-left-color: #ffc107 !important; }
+        .day-rank-4 { border-left-color: #20c997 !important; }
+        .day-rank-5 { border-left-color: #0dcaf0 !important; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <div class="container">
+            <h1 class="display-4">📊 Revenue Analytics Dashboard</h1>
+            <p class="lead">Comprehensive analysis of revenue data across all datasets</p>
+            <p class="text-light opacity-75">Last updated: 2025-12-03 13:10:29</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <ul class="nav nav-tabs" id="datasetTabs" role="tablist">
+            
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-DATA1" data-bs-toggle="tab" 
+                        data-bs-target="#content-DATA1" type="button" role="tab">
+                    DATA1
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link " id="tab-DATA2" data-bs-toggle="tab" 
+                        data-bs-target="#content-DATA2" type="button" role="tab">
+                    DATA2
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link " id="tab-DATA3" data-bs-toggle="tab" 
+                        data-bs-target="#content-DATA3" type="button" role="tab">
+                    DATA3
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="datasetContent">
+            
+            <div class="tab-pane fade show active" id="content-DATA1" role="tabpanel">
+                <div class="row">
+                    <!-- Metrics Row -->
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">704</div>
+                            <div class="metric-label">Unique Users</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">10</div>
+                            <div class="metric-label">Unique Author Sets</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">1</div>
+                            <div class="metric-label">Top Author(s)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">$58,729,986</div>
+                            <div class="metric-label">Total Revenue</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top 5 Days -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>🏆 Top 5 Days by Revenue</h5>
+                            <div class="list-group mt-3">
+                                
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-1">
+                <span>#1 2014-04-29</span>
+                <span class="badge rounded-pill" style="background-color: #dc3545">
+                    Rank 1
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-2">
+                <span>#2 2014-03-28</span>
+                <span class="badge rounded-pill" style="background-color: #fd7e14">
+                    Rank 2
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-3">
+                <span>#3 2014-05-02</span>
+                <span class="badge rounded-pill" style="background-color: #ffc107">
+                    Rank 3
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-4">
+                <span>#4 2015-06-07</span>
+                <span class="badge rounded-pill" style="background-color: #20c997">
+                    Rank 4
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-5">
+                <span>#5 2014-12-10</span>
+                <span class="badge rounded-pill" style="background-color: #0dcaf0">
+                    Rank 5
+                </span>
+            </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Most Popular Authors -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>👑 Most Popular Author(s)</h5>
+                            <div class="mt-3">
+                                <span class="author-badge">J.R.R. Tolkien</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Best Buyer IDs -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>💰 Best Buyer IDs (with Aliases)</h5>
+                            <div class="mt-3">
+                                <span class="buyer-badge">ID: best_buyer_1</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Summary -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>📈 Data Summary</h5>
+                            <ul class="list-group list-group-flush mt-3">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Data Points
+                                    <span class="badge badge-custom rounded-pill">730 days</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Revenue Range
+                                    <span class="badge badge-custom rounded-pill">
+                                        $33,352 - $220,577
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Average Daily Revenue
+                                    <span class="badge badge-custom rounded-pill">
+                                        $80,452
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Chart -->
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <h5>📊 Daily Revenue Chart</h5>
+                            <canvas id="chart-DATA1" height="100"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Raw Data Table -->
+                    <div class="col-12">
+                        <div class="metric-card">
+                            <h5>📋 Daily Revenue Data (Sample)</h5>
+                            <div class="table-responsive mt-3">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Revenue (USD)</th>
+                                            <th>Day of Week</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+            <tr>
+                <td>2014-01-01</td>
+                <td><strong>$70,667.18</strong></td>
+                <td>Wednesday</td>
+            </tr>
+            <tr>
+                <td>2014-01-02</td>
+                <td><strong>$69,787.39</strong></td>
+                <td>Thursday</td>
+            </tr>
+            <tr>
+                <td>2014-01-03</td>
+                <td><strong>$77,713.84</strong></td>
+                <td>Friday</td>
+            </tr>
+            <tr>
+                <td>2014-01-04</td>
+                <td><strong>$89,090.12</strong></td>
+                <td>Saturday</td>
+            </tr>
+            <tr>
+                <td>2014-01-05</td>
+                <td><strong>$64,954.02</strong></td>
+                <td>Sunday</td>
+            </tr>
+            <tr>
+                <td>2014-01-06</td>
+                <td><strong>$78,908.06</strong></td>
+                <td>Monday</td>
+            </tr>
+            <tr>
+                <td>2014-01-07</td>
+                <td><strong>$71,403.28</strong></td>
+                <td>Tuesday</td>
+            </tr>
+            <tr>
+                <td>2014-01-08</td>
+                <td><strong>$81,179.52</strong></td>
+                <td>Wednesday</td>
+            </tr>
+            <tr>
+                <td>2014-01-09</td>
+                <td><strong>$77,385.21</strong></td>
+                <td>Thursday</td>
+            </tr>
+            <tr>
+                <td>2014-01-10</td>
+                <td><strong>$70,334.82</strong></td>
+                <td>Friday</td>
+            </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dataset Chart -->
+                    <div class="col-12">
+                        <div class="metric-card">
+                            <h5>📈 DATA1 Detailed Analysis</h5>
+                            <div class="text-center mt-3">
+                                <img src="DATA1/DATA1_chart.png" alt="DATA1 Analysis" class="img-fluid rounded" style="max-height: 400px;">
+                                <p class="text-muted mt-2">Detailed analysis charts for DATA1</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade " id="content-DATA2" role="tabpanel">
+                <div class="row">
+                    <!-- Metrics Row -->
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">702</div>
+                            <div class="metric-label">Unique Users</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">10</div>
+                            <div class="metric-label">Unique Author Sets</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">1</div>
+                            <div class="metric-label">Top Author(s)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">$66,021,658</div>
+                            <div class="metric-label">Total Revenue</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top 5 Days -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>🏆 Top 5 Days by Revenue</h5>
+                            <div class="list-group mt-3">
+                                
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-1">
+                <span>#1 2015-04-20</span>
+                <span class="badge rounded-pill" style="background-color: #dc3545">
+                    Rank 1
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-2">
+                <span>#2 2014-05-20</span>
+                <span class="badge rounded-pill" style="background-color: #fd7e14">
+                    Rank 2
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-3">
+                <span>#3 2015-02-12</span>
+                <span class="badge rounded-pill" style="background-color: #ffc107">
+                    Rank 3
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-4">
+                <span>#4 2015-05-24</span>
+                <span class="badge rounded-pill" style="background-color: #20c997">
+                    Rank 4
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-5">
+                <span>#5 2014-03-20</span>
+                <span class="badge rounded-pill" style="background-color: #0dcaf0">
+                    Rank 5
+                </span>
+            </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Most Popular Authors -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>👑 Most Popular Author(s)</h5>
+                            <div class="mt-3">
+                                <span class="author-badge">Agatha Christie</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Best Buyer IDs -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>💰 Best Buyer IDs (with Aliases)</h5>
+                            <div class="mt-3">
+                                <span class="buyer-badge">ID: best_buyer_2</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Summary -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>📈 Data Summary</h5>
+                            <ul class="list-group list-group-flush mt-3">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Data Points
+                                    <span class="badge badge-custom rounded-pill">730 days</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Revenue Range
+                                    <span class="badge badge-custom rounded-pill">
+                                        $44,123 - $225,875
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Average Daily Revenue
+                                    <span class="badge badge-custom rounded-pill">
+                                        $90,441
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Chart -->
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <h5>📊 Daily Revenue Chart</h5>
+                            <canvas id="chart-DATA2" height="100"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Raw Data Table -->
+                    <div class="col-12">
+                        <div class="metric-card">
+                            <h5>📋 Daily Revenue Data (Sample)</h5>
+                            <div class="table-responsive mt-3">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Revenue (USD)</th>
+                                            <th>Day of Week</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+            <tr>
+                <td>2014-01-01</td>
+                <td><strong>$95,580.20</strong></td>
+                <td>Wednesday</td>
+            </tr>
+            <tr>
+                <td>2014-01-02</td>
+                <td><strong>$76,062.80</strong></td>
+                <td>Thursday</td>
+            </tr>
+            <tr>
+                <td>2014-01-03</td>
+                <td><strong>$70,499.12</strong></td>
+                <td>Friday</td>
+            </tr>
+            <tr>
+                <td>2014-01-04</td>
+                <td><strong>$86,854.65</strong></td>
+                <td>Saturday</td>
+            </tr>
+            <tr>
+                <td>2014-01-05</td>
+                <td><strong>$80,215.92</strong></td>
+                <td>Sunday</td>
+            </tr>
+            <tr>
+                <td>2014-01-06</td>
+                <td><strong>$81,906.81</strong></td>
+                <td>Monday</td>
+            </tr>
+            <tr>
+                <td>2014-01-07</td>
+                <td><strong>$95,039.17</strong></td>
+                <td>Tuesday</td>
+            </tr>
+            <tr>
+                <td>2014-01-08</td>
+                <td><strong>$90,940.96</strong></td>
+                <td>Wednesday</td>
+            </tr>
+            <tr>
+                <td>2014-01-09</td>
+                <td><strong>$88,641.19</strong></td>
+                <td>Thursday</td>
+            </tr>
+            <tr>
+                <td>2014-01-10</td>
+                <td><strong>$83,541.89</strong></td>
+                <td>Friday</td>
+            </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dataset Chart -->
+                    <div class="col-12">
+                        <div class="metric-card">
+                            <h5>📈 DATA2 Detailed Analysis</h5>
+                            <div class="text-center mt-3">
+                                <img src="DATA2/DATA2_chart.png" alt="DATA2 Analysis" class="img-fluid rounded" style="max-height: 400px;">
+                                <p class="text-muted mt-2">Detailed analysis charts for DATA2</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade " id="content-DATA3" role="tabpanel">
+                <div class="row">
+                    <!-- Metrics Row -->
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">697</div>
+                            <div class="metric-label">Unique Users</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">10</div>
+                            <div class="metric-label">Unique Author Sets</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">1</div>
+                            <div class="metric-label">Top Author(s)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="metric-value">$73,389,605</div>
+                            <div class="metric-label">Total Revenue</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top 5 Days -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>🏆 Top 5 Days by Revenue</h5>
+                            <div class="list-group mt-3">
+                                
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-1">
+                <span>#1 2015-05-04</span>
+                <span class="badge rounded-pill" style="background-color: #dc3545">
+                    Rank 1
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-2">
+                <span>#2 2015-04-16</span>
+                <span class="badge rounded-pill" style="background-color: #fd7e14">
+                    Rank 2
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-3">
+                <span>#3 2015-04-02</span>
+                <span class="badge rounded-pill" style="background-color: #ffc107">
+                    Rank 3
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-4">
+                <span>#4 2014-04-01</span>
+                <span class="badge rounded-pill" style="background-color: #20c997">
+                    Rank 4
+                </span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center day-rank-5">
+                <span>#5 2015-01-08</span>
+                <span class="badge rounded-pill" style="background-color: #0dcaf0">
+                    Rank 5
+                </span>
+            </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Most Popular Authors -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>👑 Most Popular Author(s)</h5>
+                            <div class="mt-3">
+                                <span class="author-badge">James Patterson</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Best Buyer IDs -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>💰 Best Buyer IDs (with Aliases)</h5>
+                            <div class="mt-3">
+                                <span class="buyer-badge">ID: best_buyer_3</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Summary -->
+                    <div class="col-md-6">
+                        <div class="metric-card">
+                            <h5>📈 Data Summary</h5>
+                            <ul class="list-group list-group-flush mt-3">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Data Points
+                                    <span class="badge badge-custom rounded-pill">730 days</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Revenue Range
+                                    <span class="badge badge-custom rounded-pill">
+                                        $51,877 - $263,884
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Average Daily Revenue
+                                    <span class="badge badge-custom rounded-pill">
+                                        $100,534
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Chart -->
+                    <div class="col-12">
+                        <div class="chart-container">
+                            <h5>📊 Daily Revenue Chart</h5>
+                            <canvas id="chart-DATA3" height="100"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Raw Data Table -->
+                    <div class="col-12">
+                        <div class="metric-card">
+                            <h5>📋 Daily Revenue Data (Sample)</h5>
+                            <div class="table-responsive mt-3">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Revenue (USD)</th>
+                                            <th>Day of Week</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+            <tr>
+                <td>2014-01-01</td>
+                <td><strong>$99,650.40</strong></td>
+                <td>Wednesday</td>
+            </tr>
+            <tr>
+                <td>2014-01-02</td>
+                <td><strong>$92,291.67</strong></td>
+                <td>Thursday</td>
+            </tr>
+            <tr>
+                <td>2014-01-03</td>
+                <td><strong>$74,278.70</strong></td>
+                <td>Friday</td>
+            </tr>
+            <tr>
+                <td>2014-01-04</td>
+                <td><strong>$86,604.27</strong></td>
+                <td>Saturday</td>
+            </tr>
+            <tr>
+                <td>2014-01-05</td>
+                <td><strong>$94,057.39</strong></td>
+                <td>Sunday</td>
+            </tr>
+            <tr>
+                <td>2014-01-06</td>
+                <td><strong>$98,180.92</strong></td>
+                <td>Monday</td>
+            </tr>
+            <tr>
+                <td>2014-01-07</td>
+                <td><strong>$106,337.48</strong></td>
+                <td>Tuesday</td>
+            </tr>
+            <tr>
+                <td>2014-01-08</td>
+                <td><strong>$91,986.11</strong></td>
+                <td>Wednesday</td>
+            </tr>
+            <tr>
+                <td>2014-01-09</td>
+                <td><strong>$93,395.49</strong></td>
+                <td>Thursday</td>
+            </tr>
+            <tr>
+                <td>2014-01-10</td>
+                <td><strong>$88,208.72</strong></td>
+                <td>Friday</td>
+            </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dataset Chart -->
+                    <div class="col-12">
+                        <div class="metric-card">
+                            <h5>📈 DATA3 Detailed Analysis</h5>
+                            <div class="text-center mt-3">
+                                <img src="DATA3/DATA3_chart.png" alt="DATA3 Analysis" class="img-fluid rounded" style="max-height: 400px;">
+                                <p class="text-muted mt-2">Detailed analysis charts for DATA3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        
+        // Initialize all charts
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Chart for DATA1
+            var ctxDATA1 = document.getElementById('chart-DATA1').getContext('2d');
+            var chartDATA1 = new Chart(ctxDATA1, {
+                type: 'line',
+                data: {
+                    labels: ["2014-01-01", "2014-01-02", "2014-01-03", "2014-01-04", "2014-01-05", "2014-01-06", "2014-01-07", "2014-01-08", "2014-01-09", "2014-01-10", "2014-01-11", "2014-01-12", "2014-01-13", "2014-01-14", "2014-01-15", "2014-01-16", "2014-01-17", "2014-01-18", "2014-01-19", "2014-01-20", "2014-01-21", "2014-01-22", "2014-01-23", "2014-01-24", "2014-01-25", "2014-01-26", "2014-01-27", "2014-01-28", "2014-01-29", "2014-01-30", "2014-01-31", "2014-02-01", "2014-02-02", "2014-02-03", "2014-02-04", "2014-02-05", "2014-02-06", "2014-02-07", "2014-02-08", "2014-02-09", "2014-02-10", "2014-02-11", "2014-02-12", "2014-02-13", "2014-02-14", "2014-02-15", "2014-02-16", "2014-02-17", "2014-02-18", "2014-02-19", "2014-02-20", "2014-02-21", "2014-02-22", "2014-02-23", "2014-02-24", "2014-02-25", "2014-02-26", "2014-02-27", "2014-02-28", "2014-03-01", "2014-03-02", "2014-03-03", "2014-03-04", "2014-03-05", "2014-03-06", "2014-03-07", "2014-03-08", "2014-03-09", "2014-03-10", "2014-03-11", "2014-03-12", "2014-03-13", "2014-03-14", "2014-03-15", "2014-03-16", "2014-03-17", "2014-03-18", "2014-03-19", "2014-03-20", "2014-03-21", "2014-03-22", "2014-03-23", "2014-03-24", "2014-03-25", "2014-03-26", "2014-03-27", "2014-03-28", "2014-03-29", "2014-03-30", "2014-03-31", "2014-04-01", "2014-04-02", "2014-04-03", "2014-04-04", "2014-04-05", "2014-04-06", "2014-04-07", "2014-04-08", "2014-04-09", "2014-04-10", "2014-04-11", "2014-04-12", "2014-04-13", "2014-04-14", "2014-04-15", "2014-04-16", "2014-04-17", "2014-04-18", "2014-04-19", "2014-04-20", "2014-04-21", "2014-04-22", "2014-04-23", "2014-04-24", "2014-04-25", "2014-04-26", "2014-04-27", "2014-04-28", "2014-04-29", "2014-04-30", "2014-05-01", "2014-05-02", "2014-05-03", "2014-05-04", "2014-05-05", "2014-05-06", "2014-05-07", "2014-05-08", "2014-05-09", "2014-05-10", "2014-05-11", "2014-05-12", "2014-05-13", "2014-05-14", "2014-05-15", "2014-05-16", "2014-05-17", "2014-05-18", "2014-05-19", "2014-05-20", "2014-05-21", "2014-05-22", "2014-05-23", "2014-05-24", "2014-05-25", "2014-05-26", "2014-05-27", "2014-05-28", "2014-05-29", "2014-05-30", "2014-05-31", "2014-06-01", "2014-06-02", "2014-06-03", "2014-06-04", "2014-06-05", "2014-06-06", "2014-06-07", "2014-06-08", "2014-06-09", "2014-06-10", "2014-06-11", "2014-06-12", "2014-06-13", "2014-06-14", "2014-06-15", "2014-06-16", "2014-06-17", "2014-06-18", "2014-06-19", "2014-06-20", "2014-06-21", "2014-06-22", "2014-06-23", "2014-06-24", "2014-06-25", "2014-06-26", "2014-06-27", "2014-06-28", "2014-06-29", "2014-06-30", "2014-07-01", "2014-07-02", "2014-07-03", "2014-07-04", "2014-07-05", "2014-07-06", "2014-07-07", "2014-07-08", "2014-07-09", "2014-07-10", "2014-07-11", "2014-07-12", "2014-07-13", "2014-07-14", "2014-07-15", "2014-07-16", "2014-07-17", "2014-07-18", "2014-07-19", "2014-07-20", "2014-07-21", "2014-07-22", "2014-07-23", "2014-07-24", "2014-07-25", "2014-07-26", "2014-07-27", "2014-07-28", "2014-07-29", "2014-07-30", "2014-07-31", "2014-08-01", "2014-08-02", "2014-08-03", "2014-08-04", "2014-08-05", "2014-08-06", "2014-08-07", "2014-08-08", "2014-08-09", "2014-08-10", "2014-08-11", "2014-08-12", "2014-08-13", "2014-08-14", "2014-08-15", "2014-08-16", "2014-08-17", "2014-08-18", "2014-08-19", "2014-08-20", "2014-08-21", "2014-08-22", "2014-08-23", "2014-08-24", "2014-08-25", "2014-08-26", "2014-08-27", "2014-08-28", "2014-08-29", "2014-08-30", "2014-08-31", "2014-09-01", "2014-09-02", "2014-09-03", "2014-09-04", "2014-09-05", "2014-09-06", "2014-09-07", "2014-09-08", "2014-09-09", "2014-09-10", "2014-09-11", "2014-09-12", "2014-09-13", "2014-09-14", "2014-09-15", "2014-09-16", "2014-09-17", "2014-09-18", "2014-09-19", "2014-09-20", "2014-09-21", "2014-09-22", "2014-09-23", "2014-09-24", "2014-09-25", "2014-09-26", "2014-09-27", "2014-09-28", "2014-09-29", "2014-09-30", "2014-10-01", "2014-10-02", "2014-10-03", "2014-10-04", "2014-10-05", "2014-10-06", "2014-10-07", "2014-10-08", "2014-10-09", "2014-10-10", "2014-10-11", "2014-10-12", "2014-10-13", "2014-10-14", "2014-10-15", "2014-10-16", "2014-10-17", "2014-10-18", "2014-10-19", "2014-10-20", "2014-10-21", "2014-10-22", "2014-10-23", "2014-10-24", "2014-10-25", "2014-10-26", "2014-10-27", "2014-10-28", "2014-10-29", "2014-10-30", "2014-10-31", "2014-11-01", "2014-11-02", "2014-11-03", "2014-11-04", "2014-11-05", "2014-11-06", "2014-11-07", "2014-11-08", "2014-11-09", "2014-11-10", "2014-11-11", "2014-11-12", "2014-11-13", "2014-11-14", "2014-11-15", "2014-11-16", "2014-11-17", "2014-11-18", "2014-11-19", "2014-11-20", "2014-11-21", "2014-11-22", "2014-11-23", "2014-11-24", "2014-11-25", "2014-11-26", "2014-11-27", "2014-11-28", "2014-11-29", "2014-11-30", "2014-12-01", "2014-12-02", "2014-12-03", "2014-12-04", "2014-12-05", "2014-12-06", "2014-12-07", "2014-12-08", "2014-12-09", "2014-12-10", "2014-12-11", "2014-12-12", "2014-12-13", "2014-12-14", "2014-12-15", "2014-12-16", "2014-12-17", "2014-12-18", "2014-12-19", "2014-12-20", "2014-12-21", "2014-12-22", "2014-12-23", "2014-12-24", "2014-12-25", "2014-12-26", "2014-12-27", "2014-12-28", "2014-12-29", "2014-12-30", "2014-12-31", "2015-01-01", "2015-01-02", "2015-01-03", "2015-01-04", "2015-01-05", "2015-01-06", "2015-01-07", "2015-01-08", "2015-01-09", "2015-01-10", "2015-01-11", "2015-01-12", "2015-01-13", "2015-01-14", "2015-01-15", "2015-01-16", "2015-01-17", "2015-01-18", "2015-01-19", "2015-01-20", "2015-01-21", "2015-01-22", "2015-01-23", "2015-01-24", "2015-01-25", "2015-01-26", "2015-01-27", "2015-01-28", "2015-01-29", "2015-01-30", "2015-01-31", "2015-02-01", "2015-02-02", "2015-02-03", "2015-02-04", "2015-02-05", "2015-02-06", "2015-02-07", "2015-02-08", "2015-02-09", "2015-02-10", "2015-02-11", "2015-02-12", "2015-02-13", "2015-02-14", "2015-02-15", "2015-02-16", "2015-02-17", "2015-02-18", "2015-02-19", "2015-02-20", "2015-02-21", "2015-02-22", "2015-02-23", "2015-02-24", "2015-02-25", "2015-02-26", "2015-02-27", "2015-02-28", "2015-03-01", "2015-03-02", "2015-03-03", "2015-03-04", "2015-03-05", "2015-03-06", "2015-03-07", "2015-03-08", "2015-03-09", "2015-03-10", "2015-03-11", "2015-03-12", "2015-03-13", "2015-03-14", "2015-03-15", "2015-03-16", "2015-03-17", "2015-03-18", "2015-03-19", "2015-03-20", "2015-03-21", "2015-03-22", "2015-03-23", "2015-03-24", "2015-03-25", "2015-03-26", "2015-03-27", "2015-03-28", "2015-03-29", "2015-03-30", "2015-03-31", "2015-04-01", "2015-04-02", "2015-04-03", "2015-04-04", "2015-04-05", "2015-04-06", "2015-04-07", "2015-04-08", "2015-04-09", "2015-04-10", "2015-04-11", "2015-04-12", "2015-04-13", "2015-04-14", "2015-04-15", "2015-04-16", "2015-04-17", "2015-04-18", "2015-04-19", "2015-04-20", "2015-04-21", "2015-04-22", "2015-04-23", "2015-04-24", "2015-04-25", "2015-04-26", "2015-04-27", "2015-04-28", "2015-04-29", "2015-04-30", "2015-05-01", "2015-05-02", "2015-05-03", "2015-05-04", "2015-05-05", "2015-05-06", "2015-05-07", "2015-05-08", "2015-05-09", "2015-05-10", "2015-05-11", "2015-05-12", "2015-05-13", "2015-05-14", "2015-05-15", "2015-05-16", "2015-05-17", "2015-05-18", "2015-05-19", "2015-05-20", "2015-05-21", "2015-05-22", "2015-05-23", "2015-05-24", "2015-05-25", "2015-05-26", "2015-05-27", "2015-05-28", "2015-05-29", "2015-05-30", "2015-05-31", "2015-06-01", "2015-06-02", "2015-06-03", "2015-06-04", "2015-06-05", "2015-06-06", "2015-06-07", "2015-06-08", "2015-06-09", "2015-06-10", "2015-06-11", "2015-06-12", "2015-06-13", "2015-06-14", "2015-06-15", "2015-06-16", "2015-06-17", "2015-06-18", "2015-06-19", "2015-06-20", "2015-06-21", "2015-06-22", "2015-06-23", "2015-06-24", "2015-06-25", "2015-06-26", "2015-06-27", "2015-06-28", "2015-06-29", "2015-06-30", "2015-07-01", "2015-07-02", "2015-07-03", "2015-07-04", "2015-07-05", "2015-07-06", "2015-07-07", "2015-07-08", "2015-07-09", "2015-07-10", "2015-07-11", "2015-07-12", "2015-07-13", "2015-07-14", "2015-07-15", "2015-07-16", "2015-07-17", "2015-07-18", "2015-07-19", "2015-07-20", "2015-07-21", "2015-07-22", "2015-07-23", "2015-07-24", "2015-07-25", "2015-07-26", "2015-07-27", "2015-07-28", "2015-07-29", "2015-07-30", "2015-07-31", "2015-08-01", "2015-08-02", "2015-08-03", "2015-08-04", "2015-08-05", "2015-08-06", "2015-08-07", "2015-08-08", "2015-08-09", "2015-08-10", "2015-08-11", "2015-08-12", "2015-08-13", "2015-08-14", "2015-08-15", "2015-08-16", "2015-08-17", "2015-08-18", "2015-08-19", "2015-08-20", "2015-08-21", "2015-08-22", "2015-08-23", "2015-08-24", "2015-08-25", "2015-08-26", "2015-08-27", "2015-08-28", "2015-08-29", "2015-08-30", "2015-08-31", "2015-09-01", "2015-09-02", "2015-09-03", "2015-09-04", "2015-09-05", "2015-09-06", "2015-09-07", "2015-09-08", "2015-09-09", "2015-09-10", "2015-09-11", "2015-09-12", "2015-09-13", "2015-09-14", "2015-09-15", "2015-09-16", "2015-09-17", "2015-09-18", "2015-09-19", "2015-09-20", "2015-09-21", "2015-09-22", "2015-09-23", "2015-09-24", "2015-09-25", "2015-09-26", "2015-09-27", "2015-09-28", "2015-09-29", "2015-09-30", "2015-10-01", "2015-10-02", "2015-10-03", "2015-10-04", "2015-10-05", "2015-10-06", "2015-10-07", "2015-10-08", "2015-10-09", "2015-10-10", "2015-10-11", "2015-10-12", "2015-10-13", "2015-10-14", "2015-10-15", "2015-10-16", "2015-10-17", "2015-10-18", "2015-10-19", "2015-10-20", "2015-10-21", "2015-10-22", "2015-10-23", "2015-10-24", "2015-10-25", "2015-10-26", "2015-10-27", "2015-10-28", "2015-10-29", "2015-10-30", "2015-10-31", "2015-11-01", "2015-11-02", "2015-11-03", "2015-11-04", "2015-11-05", "2015-11-06", "2015-11-07", "2015-11-08", "2015-11-09", "2015-11-10", "2015-11-11", "2015-11-12", "2015-11-13", "2015-11-14", "2015-11-15", "2015-11-16", "2015-11-17", "2015-11-18", "2015-11-19", "2015-11-20", "2015-11-21", "2015-11-22", "2015-11-23", "2015-11-24", "2015-11-25", "2015-11-26", "2015-11-27", "2015-11-28", "2015-11-29", "2015-11-30", "2015-12-01", "2015-12-02", "2015-12-03", "2015-12-04", "2015-12-05", "2015-12-06", "2015-12-07", "2015-12-08", "2015-12-09", "2015-12-10", "2015-12-11", "2015-12-12", "2015-12-13", "2015-12-14", "2015-12-15", "2015-12-16", "2015-12-17", "2015-12-18", "2015-12-19", "2015-12-20", "2015-12-21", "2015-12-22", "2015-12-23", "2015-12-24", "2015-12-25", "2015-12-26", "2015-12-27", "2015-12-28", "2015-12-29", "2015-12-30", "2015-12-31"],
+                    datasets: [{
+                        label: 'Daily Revenue (USD)',
+                        data: [70667.17962084635, 69787.38644376799, 77713.84340248628, 89090.11920107334, 64954.02054761492, 78908.0579937797, 71403.28474052282, 81179.52408283383, 77385.20977577995, 70334.81985060149, 66009.31821778673, 68884.75909224596, 87801.08797689986, 77149.48973028979, 81954.17652356028, 80919.683268504, 78464.06067632353, 85088.01680545608, 75561.34348752363, 87154.60752389536, 99623.09500088042, 102602.61285783553, 76965.47830599589, 83706.99638536967, 77321.7964878945, 65443.03548121126, 70663.58949803498, 85841.40909171519, 93160.38538230682, 84971.56113356778, 89118.32981649674, 84481.81245930772, 71301.36139567888, 77610.67537889484, 78824.19926567438, 85929.90023725829, 86544.72742298675, 72971.1409153901, 71363.20634904923, 88668.13307750106, 91048.7749414756, 94677.84246346496, 80382.53090189493, 88902.7490290324, 80838.79421375779, 79721.75817187133, 80079.94848629991, 89807.15808032238, 90941.2136237681, 94152.5867820807, 78333.68963786079, 101239.74906433572, 76413.7928941022, 68310.19447299105, 90666.31961247497, 94641.890694735, 96513.10702934564, 87528.87730840614, 94723.18677338907, 80144.70667618196, 86871.64738561491, 85735.48263168355, 87555.75186175965, 91466.59824858216, 110518.02116079674, 100192.26219998443, 78100.01263590304, 84785.64369557783, 78774.37747078283, 94385.78633525995, 95821.58947829642, 107362.47966287207, 100524.79569702256, 91606.90609612326, 85601.57794762755, 95670.84385672348, 104060.51352071381, 80524.25930716265, 100604.83555965721, 84108.18532620466, 77583.09694213264, 97247.59435724582, 97280.45320806214, 103283.48721604899, 113526.78547370146, 98164.42615122863, 198536.91291150136, 97941.66242503289, 80701.45165856785, 98068.19016000771, 104999.06147701426, 97501.72446638961, 105392.94298079071, 77157.45631002633, 85140.52763448135, 87692.46370837084, 95701.16857688875, 97355.3037702899, 87627.76434513651, 97590.58183184823, 100732.20822793433, 71760.17642298673, 79184.44518018578, 95137.13024352274, 98188.12407681692, 105378.49523519454, 112726.21341773152, 83756.08237438412, 91802.33852748814, 86454.94591350525, 81256.26438873044, 96349.36368090993, 95823.47993197777, 101378.30340308737, 97129.90035708943, 98866.94247770643, 91779.54404388482, 89839.1934779033, 220577.22274100434, 101562.63970048662, 100548.98929081288, 173117.32208542567, 93781.83748581214, 79675.6631390737, 98367.11501831507, 95897.3729502655, 99149.34729684026, 81436.74150284856, 93681.72399210854, 78205.9375321302, 81748.7141405308, 87092.06836993448, 94765.11410156249, 85908.86225133405, 81711.22240714532, 80129.63917238665, 89357.9011858688, 85416.29370083104, 88730.13951210766, 86623.8487108153, 94831.0984850693, 104865.18646986314, 77743.20799021449, 70794.96349150814, 74729.35394132142, 82936.36681521771, 78145.9995800245, 91344.47601843724, 82485.5061569048, 93672.36944681797, 89640.6439363994, 73569.59663360463, 83874.45162644566, 101021.48404330523, 89358.92723822211, 67382.90202318174, 89131.53196009016, 83391.04523695975, 68163.52623829698, 87008.36517723877, 79469.99388528016, 77566.14986897053, 90451.4547600728, 92742.06798128579, 82650.19817142466, 79679.63384162434, 97463.08836560132, 95352.59139941008, 73884.28784519738, 73939.47635639034, 58492.5971759813, 71284.08615284313, 74201.69446855567, 104153.1215623247, 77664.35473929733, 93367.15481199574, 79786.2574995729, 81905.69197041813, 66749.88870904442, 84893.51205542218, 70038.86953223462, 72798.84648266179, 79289.89726500216, 79460.6553355744, 88484.97056959104, 80264.66820647754, 62377.3245170946, 71815.26003882349, 85156.95079286506, 65509.88824911437, 71673.60319086211, 82744.19503507862, 41658.96962262867, 54867.056886764374, 82393.57249229758, 73657.6167058579, 66843.44933701346, 77385.35750119077, 66358.31133261991, 57567.47974447215, 76154.2522429491, 67727.96145880313, 78936.93837979758, 71611.2342460837, 59270.804434640384, 74098.70956689781, 54814.721269875605, 58375.01974008641, 82863.2748185911, 73947.03954719851, 75490.37294378522, 74922.34854258789, 71931.13315081879, 53876.28548081562, 67831.7381779803, 92789.33770251235, 57332.88750855285, 76073.65028043867, 66699.96769583943, 73402.27776326936, 102944.25521985562, 54094.863778078245, 79345.06365103234, 56717.143114988765, 80234.36854985797, 73775.22960372789, 68128.8089159949, 53452.248000802996, 66108.28114432603, 74049.81338729507, 67617.15564945419, 50279.77484548561, 70979.73787500616, 64336.69613160812, 73639.47357245306, 57208.8119825405, 66924.66812465683, 57663.39739757023, 57519.42318699629, 54261.84343763849, 56168.1407105317, 44415.32611405355, 44932.21409433127, 77202.96808597764, 56415.511440490685, 83237.9654737944, 46014.23930631508, 60118.15948524126, 41933.90132000992, 59309.83788420037, 65988.56115753413, 69809.45064873359, 81166.73505214212, 73682.13725903083, 51389.54854046634, 42079.73214186191, 91641.08476157927, 62929.089760550065, 47736.947278381595, 67512.46962024861, 59729.718382657964, 56717.041213645614, 38783.68295045122, 52296.3752705352, 63988.833983278935, 65230.650634293444, 67897.36527757057, 55884.12675694195, 62226.118592519146, 45019.13955895166, 62204.65765299053, 63023.59625304375, 64175.412250975605, 74062.56446339138, 45480.029199639204, 67443.07327993949, 54348.89844510388, 47928.988396555476, 60590.15111572535, 41068.21977970867, 60438.722674228804, 57881.58723251386, 65290.24375246292, 33352.29276422879, 48577.29789942998, 49915.82288973043, 73150.03324420874, 68755.09673625724, 63545.69637434516, 68845.97599586414, 46308.31195162104, 55905.25443772304, 61966.502728481675, 65748.82211353903, 67869.56656131728, 51592.07797623357, 70325.68156815576, 63709.47436189633, 67356.99475255972, 67812.31560202522, 68467.2715839905, 45452.68380205139, 57706.05254817491, 71694.00926277589, 78218.26565342119, 56250.041984642434, 66434.56262909903, 65077.52977287941, 66727.82781329827, 44934.01435834598, 51805.456386878046, 62311.04648750887, 52441.300846077065, 73802.58118360602, 72203.45943550763, 69325.90271987967, 75500.18357553972, 54590.37372244084, 45696.21381966523, 56597.94316004768, 62607.72020691056, 70175.3062531602, 57088.482644519856, 79520.72653651939, 72452.94979412822, 52575.77312079096, 68549.24241327531, 65537.41449828372, 79950.40615346514, 66548.15844446914, 54520.55864070487, 71996.87831313803, 49163.09075432451, 56637.44200714329, 77689.72008298722, 63727.45180376706, 56991.04251730656, 86720.99531976876, 84891.24796447974, 67221.64715391958, 52510.476649173215, 81057.06115818681, 73114.40159370056, 146099.15018079587, 66393.76233967494, 70844.69247772392, 66183.56538746948, 61581.44500013658, 70200.66775315958, 80366.41725277375, 71229.91499548411, 94226.65935704995, 80442.16688931636, 78285.62328741263, 66432.99094242147, 72778.87355494883, 79265.04104249006, 74091.66107336394, 65979.91053296629, 60701.69708295878, 74284.11326694117, 73915.26748629949, 89329.37611139833, 83780.64950790444, 83137.62510567426, 76095.50456845136, 74024.8268475391, 78441.36127479422, 77332.69564565604, 64368.84452513307, 94063.40857638199, 91477.4237044611, 84283.02769487815, 86490.40911969569, 69457.46818425535, 76320.39053102948, 97626.00005591636, 84176.74791430891, 98198.2808121736, 78731.34903381694, 74190.90420141374, 58830.722913013, 76548.00736476886, 75259.0786796423, 75218.47763412203, 81188.7317812284, 94110.0841346341, 93801.60220258417, 87118.16245220261, 87725.21776842799, 96354.81983290822, 99791.39842734447, 71849.40276451861, 96499.71018502503, 98775.65619915609, 85765.09297905603, 68293.9946620287, 97798.18049685883, 92583.59893473264, 112308.99943205483, 71994.87358399086, 95490.07693045084, 87173.82647021483, 82432.07665617275, 84706.77820881318, 87651.51174255404, 89535.26558273776, 95972.5401258594, 96611.00568015766, 89860.89849266173, 94351.18727645904, 95652.92808479624, 87883.6607829769, 95880.35951599904, 108747.99878470306, 103639.63542690642, 90677.83844578864, 93547.0842801791, 95951.99265641626, 97450.71638353236, 105469.93368047642, 114826.66819291541, 103135.99170982072, 96957.255957543, 94418.06240849057, 105778.55299274862, 82460.8816425121, 109136.75093867035, 110264.05541317584, 108401.3922057923, 68447.92513628857, 73460.33056095777, 100800.74817903084, 110105.25968357238, 105133.76638217771, 112154.1631274835, 92396.24669999587, 94597.50945903275, 89507.30186959672, 106749.50095649256, 95185.45386888843, 107169.42190096679, 95184.41531712777, 115703.28688563188, 89172.19868039638, 93864.76060657269, 94031.91831360606, 105111.77084826842, 104226.49936744275, 114236.1406255817, 113545.91709328092, 106802.21519463313, 79587.66938213396, 94791.47862223026, 105842.48570253317, 83664.63834220405, 112345.17384654863, 120359.82261257884, 83048.89316589052, 94443.36579036302, 124676.07413246455, 105388.15782677248, 86487.16782295647, 101774.25865011182, 114202.7300137434, 89906.81464655318, 85250.63450867875, 117468.97533984749, 103660.01244224382, 110778.87381895934, 101283.15870521269, 88842.19540440774, 97954.31059021963, 94046.72007229617, 110492.42815887184, 110167.97414975135, 104940.92594041942, 121311.09592376198, 109486.28409381524, 96017.64166645042, 79195.17232569029, 106595.93956999005, 93155.09470928382, 115439.45914364952, 108543.16382957717, 83287.86493002686, 78238.26706633391, 89081.87688695273, 104893.25275090948, 103822.07290249654, 106768.52845854199, 110781.74481465267, 104499.46953312126, 87391.22083062584, 104105.33336345066, 91492.25331485574, 102053.95443706463, 103249.37747988108, 95236.90623625586, 88564.9681672661, 96071.116388059, 103214.60296172279, 112107.47499322107, 102398.89355715485, 107981.88953593644, 116766.0382023392, 95953.55142832769, 88169.96655769722, 91207.4699254954, 92610.46807880126, 91608.11840570657, 90660.01883835917, 97758.08247403266, 92140.49854840963, 88150.57668853654, 92175.60067164764, 101010.98016632328, 89730.5178468842, 94413.23083601179, 96454.69985481643, 96345.13421785132, 92181.18190887119, 162444.65849553185, 97256.33496381242, 88945.4074171877, 84779.40239837933, 93345.68226399647, 90722.20735952823, 89545.54532430455, 73831.1954809533, 85218.1916824732, 68232.89519847656, 101848.54721523102, 73196.62395572748, 91879.58483730112, 78134.61184640117, 53748.90050192948, 94125.97370063994, 85535.07593814938, 79977.45205723324, 98231.195449406, 82039.0875708115, 74968.17284427375, 96102.65310508898, 91355.68382631193, 77728.8826444309, 92865.37383312212, 81673.40538074504, 76878.11073657857, 74483.6345991749, 70100.93833264567, 82928.94383417167, 76746.95619925615, 94304.98153202514, 98953.18141368876, 90188.62955621227, 67107.90865189236, 68755.83961556705, 90531.3689611386, 87650.51288039923, 73728.60484671059, 81046.91898927352, 70860.22693447732, 80113.77055397593, 80114.13049321852, 89916.8229748315, 74553.89170599943, 66301.56500780041, 62785.35363848671, 79759.34831237036, 80975.05767018638, 73108.45459298378, 91541.25732413182, 74390.7000908667, 82937.98475118936, 59949.684548366764, 78371.57416895164, 67626.65816139994, 67459.1194451134, 65163.689611322414, 72743.44444616986, 79651.13548229146, 72825.30412549466, 88172.48511322787, 63543.530265337315, 62901.80667205036, 62959.98984825465, 78781.6316655012, 76046.43524606663, 56562.35145009634, 74380.37066840852, 54051.64527354543, 135990.17142842535, 78597.75829486274, 82521.911306614, 75508.37174901427, 61727.0805254542, 88832.71261774706, 58405.26949320217, 55833.91179366157, 59375.887623077164, 64159.24936138997, 73997.62151682156, 69039.61529090856, 61758.68719487026, 53282.96128160114, 62290.61330636968, 71683.09431398046, 56952.04930809395, 67687.29897519088, 70164.47084915987, 71044.13641356719, 60780.40943745818, 58419.42852287279, 86502.5596923132, 55535.183784998066, 58167.38555889884, 78353.52957565365, 66774.82491973767, 52832.13643180451, 57789.192799352866, 64535.098043883656, 69914.41628661989, 82392.48303391598, 65436.99433207527, 67433.24188729987, 62409.32284450575, 54294.07825863476, 57052.06376478305, 72387.32808392057, 53630.492694451976, 77159.84795098519, 71940.55006368394, 62870.82884789031, 53260.25921212306, 59351.684280726775, 60047.547396370945, 60611.83104817712, 73220.13510172212, 63353.49013792032, 63397.08529006848, 56429.88953581259, 71730.84088723, 51931.944196503435, 71363.47268684332, 73569.11889168482, 63762.01088669686, 49815.68353807356, 59056.355104277674, 74869.92900986593, 74122.6079892014, 72397.10983162989, 70553.78315284567, 53961.39104560603, 63951.25317815477, 64339.516806701555, 84216.36605731833, 74347.43740463298, 82489.02298739315, 70046.58059734023, 68804.2947165276, 60796.54851163903, 75738.44011452398, 59801.15474407039, 73663.99908319133, 59733.00500735377, 68398.58620147839, 73283.37297359887, 47450.11434419379, 82564.86972162216, 68320.8218238108, 70920.6388337153, 70529.28077880362, 80425.50054387652, 65372.231952206166, 62813.04614022457, 65109.34183362203, 71724.509798692, 80231.39427356256, 81595.16508041079, 95785.71150615485, 73436.00805857923, 63032.80832423041, 63708.33528729182, 68781.18230668841, 87189.11492691618, 78007.52987861638, 83104.50351736373, 67210.23675451416, 61263.51185716728, 63368.471148726756, 92876.95079530372, 61419.02655812217, 69029.80772227695, 83652.40367782538, 88797.29691930418, 60552.924151507235, 131936.628638081, 93841.42914632137, 84329.0043382965, 86442.25494838631, 86974.59252300404, 71875.22560001566, 58238.57236787611, 59819.39049534696, 79285.51362835904, 74290.05221062282, 67473.33521723947, 66187.94322961182, 81001.89561309713, 73791.60166606269, 72492.71472473389, 78347.41270211189, 92495.497377943, 91619.82468155483, 81408.94274276587, 105079.84136295838, 65852.3066647651, 88666.84051761309, 87069.89439032163, 109298.2725518588, 73607.62419328789, 96425.67266294757, 92031.40213063454, 103228.60816621949, 70510.21152075606, 85677.16167984314, 89030.68303039628, 79365.31164109899, 81856.26290592208],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 2,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Daily Revenue Trend - DATA1'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Revenue: $' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxTicksLimit: 10
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            // Chart for DATA2
+            var ctxDATA2 = document.getElementById('chart-DATA2').getContext('2d');
+            var chartDATA2 = new Chart(ctxDATA2, {
+                type: 'line',
+                data: {
+                    labels: ["2014-01-01", "2014-01-02", "2014-01-03", "2014-01-04", "2014-01-05", "2014-01-06", "2014-01-07", "2014-01-08", "2014-01-09", "2014-01-10", "2014-01-11", "2014-01-12", "2014-01-13", "2014-01-14", "2014-01-15", "2014-01-16", "2014-01-17", "2014-01-18", "2014-01-19", "2014-01-20", "2014-01-21", "2014-01-22", "2014-01-23", "2014-01-24", "2014-01-25", "2014-01-26", "2014-01-27", "2014-01-28", "2014-01-29", "2014-01-30", "2014-01-31", "2014-02-01", "2014-02-02", "2014-02-03", "2014-02-04", "2014-02-05", "2014-02-06", "2014-02-07", "2014-02-08", "2014-02-09", "2014-02-10", "2014-02-11", "2014-02-12", "2014-02-13", "2014-02-14", "2014-02-15", "2014-02-16", "2014-02-17", "2014-02-18", "2014-02-19", "2014-02-20", "2014-02-21", "2014-02-22", "2014-02-23", "2014-02-24", "2014-02-25", "2014-02-26", "2014-02-27", "2014-02-28", "2014-03-01", "2014-03-02", "2014-03-03", "2014-03-04", "2014-03-05", "2014-03-06", "2014-03-07", "2014-03-08", "2014-03-09", "2014-03-10", "2014-03-11", "2014-03-12", "2014-03-13", "2014-03-14", "2014-03-15", "2014-03-16", "2014-03-17", "2014-03-18", "2014-03-19", "2014-03-20", "2014-03-21", "2014-03-22", "2014-03-23", "2014-03-24", "2014-03-25", "2014-03-26", "2014-03-27", "2014-03-28", "2014-03-29", "2014-03-30", "2014-03-31", "2014-04-01", "2014-04-02", "2014-04-03", "2014-04-04", "2014-04-05", "2014-04-06", "2014-04-07", "2014-04-08", "2014-04-09", "2014-04-10", "2014-04-11", "2014-04-12", "2014-04-13", "2014-04-14", "2014-04-15", "2014-04-16", "2014-04-17", "2014-04-18", "2014-04-19", "2014-04-20", "2014-04-21", "2014-04-22", "2014-04-23", "2014-04-24", "2014-04-25", "2014-04-26", "2014-04-27", "2014-04-28", "2014-04-29", "2014-04-30", "2014-05-01", "2014-05-02", "2014-05-03", "2014-05-04", "2014-05-05", "2014-05-06", "2014-05-07", "2014-05-08", "2014-05-09", "2014-05-10", "2014-05-11", "2014-05-12", "2014-05-13", "2014-05-14", "2014-05-15", "2014-05-16", "2014-05-17", "2014-05-18", "2014-05-19", "2014-05-20", "2014-05-21", "2014-05-22", "2014-05-23", "2014-05-24", "2014-05-25", "2014-05-26", "2014-05-27", "2014-05-28", "2014-05-29", "2014-05-30", "2014-05-31", "2014-06-01", "2014-06-02", "2014-06-03", "2014-06-04", "2014-06-05", "2014-06-06", "2014-06-07", "2014-06-08", "2014-06-09", "2014-06-10", "2014-06-11", "2014-06-12", "2014-06-13", "2014-06-14", "2014-06-15", "2014-06-16", "2014-06-17", "2014-06-18", "2014-06-19", "2014-06-20", "2014-06-21", "2014-06-22", "2014-06-23", "2014-06-24", "2014-06-25", "2014-06-26", "2014-06-27", "2014-06-28", "2014-06-29", "2014-06-30", "2014-07-01", "2014-07-02", "2014-07-03", "2014-07-04", "2014-07-05", "2014-07-06", "2014-07-07", "2014-07-08", "2014-07-09", "2014-07-10", "2014-07-11", "2014-07-12", "2014-07-13", "2014-07-14", "2014-07-15", "2014-07-16", "2014-07-17", "2014-07-18", "2014-07-19", "2014-07-20", "2014-07-21", "2014-07-22", "2014-07-23", "2014-07-24", "2014-07-25", "2014-07-26", "2014-07-27", "2014-07-28", "2014-07-29", "2014-07-30", "2014-07-31", "2014-08-01", "2014-08-02", "2014-08-03", "2014-08-04", "2014-08-05", "2014-08-06", "2014-08-07", "2014-08-08", "2014-08-09", "2014-08-10", "2014-08-11", "2014-08-12", "2014-08-13", "2014-08-14", "2014-08-15", "2014-08-16", "2014-08-17", "2014-08-18", "2014-08-19", "2014-08-20", "2014-08-21", "2014-08-22", "2014-08-23", "2014-08-24", "2014-08-25", "2014-08-26", "2014-08-27", "2014-08-28", "2014-08-29", "2014-08-30", "2014-08-31", "2014-09-01", "2014-09-02", "2014-09-03", "2014-09-04", "2014-09-05", "2014-09-06", "2014-09-07", "2014-09-08", "2014-09-09", "2014-09-10", "2014-09-11", "2014-09-12", "2014-09-13", "2014-09-14", "2014-09-15", "2014-09-16", "2014-09-17", "2014-09-18", "2014-09-19", "2014-09-20", "2014-09-21", "2014-09-22", "2014-09-23", "2014-09-24", "2014-09-25", "2014-09-26", "2014-09-27", "2014-09-28", "2014-09-29", "2014-09-30", "2014-10-01", "2014-10-02", "2014-10-03", "2014-10-04", "2014-10-05", "2014-10-06", "2014-10-07", "2014-10-08", "2014-10-09", "2014-10-10", "2014-10-11", "2014-10-12", "2014-10-13", "2014-10-14", "2014-10-15", "2014-10-16", "2014-10-17", "2014-10-18", "2014-10-19", "2014-10-20", "2014-10-21", "2014-10-22", "2014-10-23", "2014-10-24", "2014-10-25", "2014-10-26", "2014-10-27", "2014-10-28", "2014-10-29", "2014-10-30", "2014-10-31", "2014-11-01", "2014-11-02", "2014-11-03", "2014-11-04", "2014-11-05", "2014-11-06", "2014-11-07", "2014-11-08", "2014-11-09", "2014-11-10", "2014-11-11", "2014-11-12", "2014-11-13", "2014-11-14", "2014-11-15", "2014-11-16", "2014-11-17", "2014-11-18", "2014-11-19", "2014-11-20", "2014-11-21", "2014-11-22", "2014-11-23", "2014-11-24", "2014-11-25", "2014-11-26", "2014-11-27", "2014-11-28", "2014-11-29", "2014-11-30", "2014-12-01", "2014-12-02", "2014-12-03", "2014-12-04", "2014-12-05", "2014-12-06", "2014-12-07", "2014-12-08", "2014-12-09", "2014-12-10", "2014-12-11", "2014-12-12", "2014-12-13", "2014-12-14", "2014-12-15", "2014-12-16", "2014-12-17", "2014-12-18", "2014-12-19", "2014-12-20", "2014-12-21", "2014-12-22", "2014-12-23", "2014-12-24", "2014-12-25", "2014-12-26", "2014-12-27", "2014-12-28", "2014-12-29", "2014-12-30", "2014-12-31", "2015-01-01", "2015-01-02", "2015-01-03", "2015-01-04", "2015-01-05", "2015-01-06", "2015-01-07", "2015-01-08", "2015-01-09", "2015-01-10", "2015-01-11", "2015-01-12", "2015-01-13", "2015-01-14", "2015-01-15", "2015-01-16", "2015-01-17", "2015-01-18", "2015-01-19", "2015-01-20", "2015-01-21", "2015-01-22", "2015-01-23", "2015-01-24", "2015-01-25", "2015-01-26", "2015-01-27", "2015-01-28", "2015-01-29", "2015-01-30", "2015-01-31", "2015-02-01", "2015-02-02", "2015-02-03", "2015-02-04", "2015-02-05", "2015-02-06", "2015-02-07", "2015-02-08", "2015-02-09", "2015-02-10", "2015-02-11", "2015-02-12", "2015-02-13", "2015-02-14", "2015-02-15", "2015-02-16", "2015-02-17", "2015-02-18", "2015-02-19", "2015-02-20", "2015-02-21", "2015-02-22", "2015-02-23", "2015-02-24", "2015-02-25", "2015-02-26", "2015-02-27", "2015-02-28", "2015-03-01", "2015-03-02", "2015-03-03", "2015-03-04", "2015-03-05", "2015-03-06", "2015-03-07", "2015-03-08", "2015-03-09", "2015-03-10", "2015-03-11", "2015-03-12", "2015-03-13", "2015-03-14", "2015-03-15", "2015-03-16", "2015-03-17", "2015-03-18", "2015-03-19", "2015-03-20", "2015-03-21", "2015-03-22", "2015-03-23", "2015-03-24", "2015-03-25", "2015-03-26", "2015-03-27", "2015-03-28", "2015-03-29", "2015-03-30", "2015-03-31", "2015-04-01", "2015-04-02", "2015-04-03", "2015-04-04", "2015-04-05", "2015-04-06", "2015-04-07", "2015-04-08", "2015-04-09", "2015-04-10", "2015-04-11", "2015-04-12", "2015-04-13", "2015-04-14", "2015-04-15", "2015-04-16", "2015-04-17", "2015-04-18", "2015-04-19", "2015-04-20", "2015-04-21", "2015-04-22", "2015-04-23", "2015-04-24", "2015-04-25", "2015-04-26", "2015-04-27", "2015-04-28", "2015-04-29", "2015-04-30", "2015-05-01", "2015-05-02", "2015-05-03", "2015-05-04", "2015-05-05", "2015-05-06", "2015-05-07", "2015-05-08", "2015-05-09", "2015-05-10", "2015-05-11", "2015-05-12", "2015-05-13", "2015-05-14", "2015-05-15", "2015-05-16", "2015-05-17", "2015-05-18", "2015-05-19", "2015-05-20", "2015-05-21", "2015-05-22", "2015-05-23", "2015-05-24", "2015-05-25", "2015-05-26", "2015-05-27", "2015-05-28", "2015-05-29", "2015-05-30", "2015-05-31", "2015-06-01", "2015-06-02", "2015-06-03", "2015-06-04", "2015-06-05", "2015-06-06", "2015-06-07", "2015-06-08", "2015-06-09", "2015-06-10", "2015-06-11", "2015-06-12", "2015-06-13", "2015-06-14", "2015-06-15", "2015-06-16", "2015-06-17", "2015-06-18", "2015-06-19", "2015-06-20", "2015-06-21", "2015-06-22", "2015-06-23", "2015-06-24", "2015-06-25", "2015-06-26", "2015-06-27", "2015-06-28", "2015-06-29", "2015-06-30", "2015-07-01", "2015-07-02", "2015-07-03", "2015-07-04", "2015-07-05", "2015-07-06", "2015-07-07", "2015-07-08", "2015-07-09", "2015-07-10", "2015-07-11", "2015-07-12", "2015-07-13", "2015-07-14", "2015-07-15", "2015-07-16", "2015-07-17", "2015-07-18", "2015-07-19", "2015-07-20", "2015-07-21", "2015-07-22", "2015-07-23", "2015-07-24", "2015-07-25", "2015-07-26", "2015-07-27", "2015-07-28", "2015-07-29", "2015-07-30", "2015-07-31", "2015-08-01", "2015-08-02", "2015-08-03", "2015-08-04", "2015-08-05", "2015-08-06", "2015-08-07", "2015-08-08", "2015-08-09", "2015-08-10", "2015-08-11", "2015-08-12", "2015-08-13", "2015-08-14", "2015-08-15", "2015-08-16", "2015-08-17", "2015-08-18", "2015-08-19", "2015-08-20", "2015-08-21", "2015-08-22", "2015-08-23", "2015-08-24", "2015-08-25", "2015-08-26", "2015-08-27", "2015-08-28", "2015-08-29", "2015-08-30", "2015-08-31", "2015-09-01", "2015-09-02", "2015-09-03", "2015-09-04", "2015-09-05", "2015-09-06", "2015-09-07", "2015-09-08", "2015-09-09", "2015-09-10", "2015-09-11", "2015-09-12", "2015-09-13", "2015-09-14", "2015-09-15", "2015-09-16", "2015-09-17", "2015-09-18", "2015-09-19", "2015-09-20", "2015-09-21", "2015-09-22", "2015-09-23", "2015-09-24", "2015-09-25", "2015-09-26", "2015-09-27", "2015-09-28", "2015-09-29", "2015-09-30", "2015-10-01", "2015-10-02", "2015-10-03", "2015-10-04", "2015-10-05", "2015-10-06", "2015-10-07", "2015-10-08", "2015-10-09", "2015-10-10", "2015-10-11", "2015-10-12", "2015-10-13", "2015-10-14", "2015-10-15", "2015-10-16", "2015-10-17", "2015-10-18", "2015-10-19", "2015-10-20", "2015-10-21", "2015-10-22", "2015-10-23", "2015-10-24", "2015-10-25", "2015-10-26", "2015-10-27", "2015-10-28", "2015-10-29", "2015-10-30", "2015-10-31", "2015-11-01", "2015-11-02", "2015-11-03", "2015-11-04", "2015-11-05", "2015-11-06", "2015-11-07", "2015-11-08", "2015-11-09", "2015-11-10", "2015-11-11", "2015-11-12", "2015-11-13", "2015-11-14", "2015-11-15", "2015-11-16", "2015-11-17", "2015-11-18", "2015-11-19", "2015-11-20", "2015-11-21", "2015-11-22", "2015-11-23", "2015-11-24", "2015-11-25", "2015-11-26", "2015-11-27", "2015-11-28", "2015-11-29", "2015-11-30", "2015-12-01", "2015-12-02", "2015-12-03", "2015-12-04", "2015-12-05", "2015-12-06", "2015-12-07", "2015-12-08", "2015-12-09", "2015-12-10", "2015-12-11", "2015-12-12", "2015-12-13", "2015-12-14", "2015-12-15", "2015-12-16", "2015-12-17", "2015-12-18", "2015-12-19", "2015-12-20", "2015-12-21", "2015-12-22", "2015-12-23", "2015-12-24", "2015-12-25", "2015-12-26", "2015-12-27", "2015-12-28", "2015-12-29", "2015-12-30", "2015-12-31"],
+                    datasets: [{
+                        label: 'Daily Revenue (USD)',
+                        data: [95580.20176379522, 76062.80222143936, 70499.11731822063, 86854.64781557536, 80215.92334335968, 81906.81449249665, 95039.17463265089, 90940.95872730228, 88641.18691695071, 83541.88969624098, 76516.76043741147, 65769.40859711856, 98796.85015801259, 80579.68738392724, 83963.08200219207, 94301.28133932623, 95262.37511922467, 85094.00170233242, 52590.28766851841, 79017.69049913021, 82239.03852388056, 79265.79256423809, 92792.17334865926, 96135.29201572921, 96670.56213978236, 98272.41331355569, 90819.08767946817, 97255.68603035201, 194271.8369101251, 89195.65140265414, 98335.81061739792, 92920.79287698491, 72720.59124952667, 88003.74697856157, 110385.88110722673, 85874.19688239894, 100100.95996799417, 101724.662778269, 75575.58142535968, 75571.38122784237, 96370.05736198518, 103454.9580439142, 86262.85668314941, 108091.3380945365, 89755.7382447173, 93934.8022360797, 85830.9450676111, 106897.07880152836, 112266.5373522431, 80194.56012157284, 102149.77680796776, 100199.75591309965, 90122.08487972702, 100423.1997372572, 95665.72723386678, 108665.07635692424, 81710.2224711562, 92672.65900528729, 108729.3203362162, 108858.77061119225, 85239.89296667727, 108118.11350684035, 100020.88150069275, 92037.10312749412, 128527.5620880838, 111259.86690649106, 84257.59484249882, 114051.53684342754, 106458.63701330883, 104992.83440454974, 105575.66996095606, 115433.05232147682, 104954.36721973245, 104842.23158135601, 74688.84825120986, 103766.4262058608, 120071.64567091972, 95452.17179547051, 199499.61759971923, 96970.35486221623, 92680.45762424966, 108397.05276478232, 97905.21401747748, 97388.3069392648, 108532.17879979683, 106970.0927270974, 119818.744464534, 104084.03639095215, 115213.82941445864, 108776.88088017218, 92069.77800395832, 111630.21488858381, 99998.00971136613, 101254.34452642172, 94362.3183372751, 83352.13624412616, 100247.29071875362, 107153.06672817614, 100146.72423740903, 108469.58482730763, 109939.5938304306, 103174.23833249918, 98200.02341306147, 100500.42704831138, 116632.1426652119, 98083.51842049506, 116766.22549273797, 105427.21698992717, 86397.56713659532, 98923.75894988098, 106532.8800600141, 102772.82267761689, 111513.23549309855, 116679.24100573549, 101315.45533389351, 98857.25598649564, 89333.27448370827, 111009.98710189729, 102215.52167340255, 116190.79660309447, 102452.7927323375, 103874.17168357056, 100815.50810896714, 95675.23505884265, 86911.8719544834, 111045.46176540035, 94483.04427688231, 101468.9708562638, 92614.14197821206, 84293.17763396245, 84430.66474265694, 107729.26320604925, 96201.91483001305, 91652.32090025838, 82425.66000877095, 107552.79827733191, 85197.50368004396, 97972.3723821314, 102159.13384914084, 213951.47335657157, 90538.91187214677, 111714.06601614159, 194935.86921707302, 87291.07255951088, 90653.6964065237, 101704.71349978265, 97778.24739657545, 91803.57043263089, 115984.20446925481, 100271.24079106908, 98952.81780946521, 97512.99398547669, 104846.96584832585, 108858.18770981094, 107826.10940046515, 79831.00505778045, 92529.4589792574, 94571.03528620006, 71628.79781665807, 106978.35432330729, 82470.69607474667, 102509.86907055356, 96448.96870602218, 84005.95494399723, 87615.60739898587, 80399.49661304835, 107327.76198810687, 90230.72017047877, 98598.80538578122, 93580.48799956647, 97931.15404354887, 95150.67252749318, 87253.84301245847, 96804.68238881385, 97031.37106671013, 94732.738405603, 94997.35463402695, 89750.44995890015, 81916.112348644, 102669.14258606809, 84147.00346336629, 91245.76282826971, 95622.88230276667, 86231.01506299764, 81505.80187877394, 81079.13937768988, 97226.80809942645, 73984.50001306037, 86809.72162742002, 82185.20733291926, 81624.89458975766, 74446.73810222876, 80859.13453211541, 80255.12290728524, 65154.22689028204, 72208.9588080049, 78929.85631068144, 100109.04318815014, 90302.92490059396, 69448.51891244315, 71460.49550021821, 94171.13125540485, 82060.81945835175, 94721.28579830837, 100288.21063439343, 83632.48174887865, 67044.66935854201, 83940.27225347415, 72149.05082266332, 96181.27218183287, 87937.56220994146, 85730.54903886432, 70314.14893967297, 66431.66783079568, 55470.375417815296, 85927.32914012318, 76606.29839491268, 65977.6274236196, 80095.92245432822, 85510.3074119674, 84147.55804692105, 73100.91700828142, 81259.7077297449, 59172.29100748262, 73176.08690470582, 80681.5946659052, 75593.06749594437, 68961.64487035577, 55507.199029133175, 86863.11776065173, 75247.17187689024, 81263.09101277535, 85231.85805424329, 85490.19814555623, 75025.62782256649, 72884.51323493832, 63536.4885453643, 65615.9661817603, 71965.12650228526, 89612.19024976302, 59846.74023965203, 64220.357127219344, 68406.0089015057, 58668.2484725438, 77912.42433740539, 64871.224384159774, 65526.58018187795, 75104.72144483775, 73850.07291114282, 66344.03441925999, 60600.83390252725, 69546.29691682234, 79500.37639024983, 63261.38223164335, 60558.75825355367, 67608.84131774318, 79172.64500361586, 65745.50612484424, 78273.20778704462, 100982.10295687235, 74004.28715028515, 76610.69965680827, 61122.677016578826, 62772.13963053228, 67719.36384212777, 78616.48814501376, 58171.17597541486, 55712.8706765974, 154841.5331067835, 52516.925633853665, 68213.06560185428, 50180.40348768469, 78007.40706412523, 74793.31921043005, 68573.7230023934, 68972.60895775053, 57045.81133612955, 60706.14920730872, 74526.63672936165, 80858.2882730811, 71215.14333318974, 71730.94597835679, 88868.01247779223, 58957.754296346066, 69370.73013445204, 59154.072284183014, 58134.46907510355, 67937.89503868441, 63649.43868562525, 72302.73128479907, 69971.81635865911, 55125.62407012963, 68005.38970532367, 76236.46568356815, 79212.14167825071, 60748.429215085554, 81449.29792548511, 44122.6625055165, 58300.80067868202, 64104.31928860541, 76272.91378614117, 51489.81376588752, 67551.6380566031, 73832.49023309538, 59070.558700304246, 88640.9166657463, 63514.295117362686, 71894.5264329224, 64128.44966375931, 69295.9846859804, 93204.19006840092, 68517.968722307, 64527.8929266538, 70114.85772275458, 84430.64526239455, 77210.47653878086, 78737.36412686652, 70101.10499177597, 75234.6855449567, 66212.03606687786, 88474.62559216055, 90093.05899733906, 84916.38707474155, 150737.46948695305, 68248.30819592744, 68999.02886627983, 64049.64494093545, 84742.35117208675, 88308.29146317668, 82184.72308869346, 86064.53336448557, 71618.56513664563, 69272.72389582105, 48011.95876215809, 82922.89027023189, 73633.69617262915, 84304.8945302992, 78922.08379955098, 74748.96305827539, 68116.01563140558, 69715.61687602209, 101800.27696910073, 87374.78474607121, 85765.69073223474, 83477.17513814766, 87752.5777245363, 65849.61957576389, 68950.02239386424, 76795.37027901023, 76652.94355523965, 97273.89510857349, 108047.9760680508, 96097.08090365522, 79103.91307505166, 89382.87001650782, 86074.28322225786, 82972.36190064996, 92224.94299107234, 90437.14420087195, 69765.05845761052, 89739.68240878069, 87412.73230460582, 89974.97307849128, 96606.82894664715, 87345.95884841403, 91748.3718494196, 89430.4336540946, 76530.23402509556, 86099.22277593597, 101080.76370187038, 90396.64169329523, 89658.29879339067, 104785.79618607444, 102204.42960006057, 82411.84653450269, 80920.70998270273, 99088.26759998378, 94009.52754947153, 108564.05784570794, 98110.14880520207, 101217.45631939791, 73666.04639570841, 73975.05729526757, 80116.55557461645, 98222.57392828613, 97772.31240055047, 105992.0395773757, 95616.6934796466, 85916.40244334246, 85553.0673392415, 96543.97786569477, 104481.44461924378, 100231.60776622807, 115658.98281692421, 104982.9463551541, 78800.28836029579, 80057.60815609214, 117966.76232492346, 95094.75135809391, 86855.61834981873, 105432.7198036866, 83582.02771888732, 88705.00363504108, 88887.33398122514, 94692.68161499979, 115956.22643288832, 107853.19708397008, 205311.72807341485, 107804.13629294863, 95882.21132155976, 101205.99971128482, 103653.1526450719, 106237.64625642999, 120095.3133597715, 108357.29484718156, 92792.54263365689, 121252.57728431179, 93824.55032540712, 126672.98416894244, 112555.01072525229, 113074.80733065672, 103895.93300731984, 119230.24018519193, 109066.80322468333, 102927.33776072513, 112385.35850487706, 108963.95342330504, 116586.18644070963, 111916.37379682831, 99567.80010046937, 104499.23303905902, 95826.9358022922, 115606.81498031919, 125040.65544125233, 114624.36079343002, 113274.87678554391, 127955.72346774342, 101816.59298269603, 94642.65860209434, 101012.12134844477, 105706.10526922379, 119075.59677943778, 102436.7532352434, 113867.26431433024, 92206.73301644875, 98718.10444620531, 110295.57797629427, 121758.19438148879, 102613.53366813669, 117560.92723023088, 110471.88703255086, 112024.86230459942, 99203.5235688535, 122709.33331621713, 118563.30509477094, 105467.97780657816, 121029.06434346808, 104186.60111660976, 113593.15720966317, 103491.74381697548, 119520.69465768411, 116124.04643592537, 103830.79893334227, 105291.57615920345, 99619.35855237972, 97250.22625113091, 90629.17838377069, 122232.83247151303, 120793.47395487595, 117019.01553441511, 122658.82933427191, 96114.71395567153, 92900.83200567708, 103510.62916708498, 225875.45400397936, 123731.35392177073, 111349.7658357109, 115185.86000262354, 108348.58386108775, 103184.52710074032, 117677.39194521144, 105402.26674784497, 115605.20330495192, 116669.09559842688, 99600.57291455282, 99229.05348551391, 101177.22550494596, 88055.62812340519, 120535.11646779787, 105138.29735163029, 126218.7308900635, 118771.35410355609, 110327.2486286647, 104464.44446889841, 114313.7861755922, 101538.26243122474, 101508.50438236252, 122381.65220875654, 102770.5070407897, 90670.74213007111, 116208.0009162957, 113117.69430623531, 104638.2423825936, 111870.32187083951, 117416.76930899623, 100224.8910528629, 109167.95049377906, 99986.33428654932, 200706.95580719982, 101802.34824537508, 109695.52794020875, 113020.06641620565, 103705.5797911795, 110359.2133322148, 92273.22216809056, 102302.77750941586, 107453.84873612705, 87808.57532455749, 99171.2633617654, 95126.25545363923, 92752.25414683262, 85389.83220140041, 90616.33618589891, 97390.71629121255, 92242.8176480088, 97123.68349298279, 94994.64346144554, 110271.79342637309, 81589.72878465206, 81509.29494866457, 95040.0838586087, 92572.31759613828, 91326.62031584016, 94661.83291105302, 108500.81422189626, 96782.01277384355, 81479.04943751135, 97531.60267492442, 97674.27510149572, 96116.2490018909, 99318.70870227169, 99325.26075143076, 82576.67333095918, 92118.50983296066, 90657.06645963898, 97394.48544463019, 98556.94328762371, 76699.50877014798, 101842.2553162623, 86519.66630872611, 72510.009664429, 91364.8415885079, 105748.38317281188, 93617.06490285994, 115022.55545030322, 88784.83287174546, 98812.2890116958, 79084.95646578072, 91385.88538984142, 95912.33199332787, 93811.67623043506, 102412.94311610886, 86906.91300000381, 88828.96635360408, 83820.31588878683, 87324.22795608567, 93424.8012882727, 82102.2491458439, 69806.88112418703, 90023.13799891503, 75898.47365263253, 87966.89157301231, 87421.78086616773, 95669.9555598844, 97398.6291314525, 89144.03208619419, 92612.5137122792, 87488.31047369509, 77640.26653568754, 92645.79801083614, 81058.9939224982, 84738.42280371679, 96324.88948027513, 84000.43053310555, 75564.4901859847, 76345.67813805307, 90343.97439065935, 61853.485921002226, 81643.76549937828, 59994.41929941626, 101480.51801921143, 74828.19284837734, 77066.6334277922, 60455.80205972446, 92212.74272917613, 87700.87256043956, 79366.27570024985, 63021.57697299824, 67264.45091738141, 67662.48478522648, 101682.12037664259, 77560.09533331974, 91439.35321499998, 92092.55688429653, 79219.9488846682, 80355.74479509697, 60353.452975903194, 68338.04672524793, 67402.33951905652, 76708.24171792071, 83786.0714760846, 72900.19166117912, 74902.34035991329, 63651.961316767534, 88115.90296956361, 85358.06682761114, 73859.51525714385, 82760.96439220008, 87662.59986583849, 57710.69601501886, 59298.08026199777, 78003.03380250851, 89547.04208552057, 77741.12369671548, 90108.21896323662, 85406.85496705266, 68259.33887735983, 70141.2499048361, 89673.25263511245, 79301.66119313955, 54424.40564661579, 75001.46090636375, 86282.64905814345, 53331.55314787191, 66838.60507577428, 64028.968957926416, 75351.99530950497, 74410.55736766558, 77787.04400470674, 67283.2104980668, 62324.63052558601, 67814.02034358865, 76982.34499468516, 65806.60885054024, 83328.55467560362, 70861.11690436708, 62970.100542167114, 61844.51584132126, 65734.08452247526, 79801.68348093229, 82886.60823370177, 88669.13395054055, 78138.42183086919, 72255.56763189501, 111082.13814398904, 62865.172167952325, 83675.00115245653, 72015.71336522906, 85647.03282225471, 100644.59271894359, 84348.16739361726, 70431.81347420787, 76312.52148048795, 79244.36009639436, 79063.05825912982, 62107.9573651555, 79078.05927450523, 90989.8914503846, 53007.84737492243, 78628.2925301724, 83948.3104020578, 78099.2375690031, 77742.43564235968, 87874.81555976254, 69984.71096111056, 67219.15219874361, 57207.84013195229, 76757.98434417188, 94234.36781914263, 84551.6638976404, 86703.95298672264, 73156.68916129066, 72652.25211576221, 92447.25107470945, 95707.53475289805, 94698.53050495779, 92237.53348436758, 87757.66058378528, 94237.8551158535, 83912.05794114483, 86337.6607474688, 80972.49435253414, 83550.7586932184, 99111.237538618, 97140.70318290916, 86199.87142439284, 72062.51384207295, 57853.1192468327, 97647.72792821827, 86470.88176115729, 73776.94650029272, 107254.95743614991, 80804.26254061292, 66962.44405748034, 73346.75257891479, 86784.62093575939, 78258.1394539093, 105828.69621080533, 85465.15532550214, 117206.60235925234, 73688.31853673172, 87344.64445151547, 97390.1846958732, 88131.33133662867, 92624.10464145601, 98982.0269302153, 91959.60496941462, 71227.45151568686, 88631.42232815614, 103446.27191466605, 104743.77293897039, 93952.27022220912, 69788.72092052511, 101153.93390690701, 101772.1060523397, 99549.76964410086, 106127.83226925434, 102420.77731060158, 93062.44813896119, 89951.87116073351],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 2,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Daily Revenue Trend - DATA2'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Revenue: $' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxTicksLimit: 10
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            // Chart for DATA3
+            var ctxDATA3 = document.getElementById('chart-DATA3').getContext('2d');
+            var chartDATA3 = new Chart(ctxDATA3, {
+                type: 'line',
+                data: {
+                    labels: ["2014-01-01", "2014-01-02", "2014-01-03", "2014-01-04", "2014-01-05", "2014-01-06", "2014-01-07", "2014-01-08", "2014-01-09", "2014-01-10", "2014-01-11", "2014-01-12", "2014-01-13", "2014-01-14", "2014-01-15", "2014-01-16", "2014-01-17", "2014-01-18", "2014-01-19", "2014-01-20", "2014-01-21", "2014-01-22", "2014-01-23", "2014-01-24", "2014-01-25", "2014-01-26", "2014-01-27", "2014-01-28", "2014-01-29", "2014-01-30", "2014-01-31", "2014-02-01", "2014-02-02", "2014-02-03", "2014-02-04", "2014-02-05", "2014-02-06", "2014-02-07", "2014-02-08", "2014-02-09", "2014-02-10", "2014-02-11", "2014-02-12", "2014-02-13", "2014-02-14", "2014-02-15", "2014-02-16", "2014-02-17", "2014-02-18", "2014-02-19", "2014-02-20", "2014-02-21", "2014-02-22", "2014-02-23", "2014-02-24", "2014-02-25", "2014-02-26", "2014-02-27", "2014-02-28", "2014-03-01", "2014-03-02", "2014-03-03", "2014-03-04", "2014-03-05", "2014-03-06", "2014-03-07", "2014-03-08", "2014-03-09", "2014-03-10", "2014-03-11", "2014-03-12", "2014-03-13", "2014-03-14", "2014-03-15", "2014-03-16", "2014-03-17", "2014-03-18", "2014-03-19", "2014-03-20", "2014-03-21", "2014-03-22", "2014-03-23", "2014-03-24", "2014-03-25", "2014-03-26", "2014-03-27", "2014-03-28", "2014-03-29", "2014-03-30", "2014-03-31", "2014-04-01", "2014-04-02", "2014-04-03", "2014-04-04", "2014-04-05", "2014-04-06", "2014-04-07", "2014-04-08", "2014-04-09", "2014-04-10", "2014-04-11", "2014-04-12", "2014-04-13", "2014-04-14", "2014-04-15", "2014-04-16", "2014-04-17", "2014-04-18", "2014-04-19", "2014-04-20", "2014-04-21", "2014-04-22", "2014-04-23", "2014-04-24", "2014-04-25", "2014-04-26", "2014-04-27", "2014-04-28", "2014-04-29", "2014-04-30", "2014-05-01", "2014-05-02", "2014-05-03", "2014-05-04", "2014-05-05", "2014-05-06", "2014-05-07", "2014-05-08", "2014-05-09", "2014-05-10", "2014-05-11", "2014-05-12", "2014-05-13", "2014-05-14", "2014-05-15", "2014-05-16", "2014-05-17", "2014-05-18", "2014-05-19", "2014-05-20", "2014-05-21", "2014-05-22", "2014-05-23", "2014-05-24", "2014-05-25", "2014-05-26", "2014-05-27", "2014-05-28", "2014-05-29", "2014-05-30", "2014-05-31", "2014-06-01", "2014-06-02", "2014-06-03", "2014-06-04", "2014-06-05", "2014-06-06", "2014-06-07", "2014-06-08", "2014-06-09", "2014-06-10", "2014-06-11", "2014-06-12", "2014-06-13", "2014-06-14", "2014-06-15", "2014-06-16", "2014-06-17", "2014-06-18", "2014-06-19", "2014-06-20", "2014-06-21", "2014-06-22", "2014-06-23", "2014-06-24", "2014-06-25", "2014-06-26", "2014-06-27", "2014-06-28", "2014-06-29", "2014-06-30", "2014-07-01", "2014-07-02", "2014-07-03", "2014-07-04", "2014-07-05", "2014-07-06", "2014-07-07", "2014-07-08", "2014-07-09", "2014-07-10", "2014-07-11", "2014-07-12", "2014-07-13", "2014-07-14", "2014-07-15", "2014-07-16", "2014-07-17", "2014-07-18", "2014-07-19", "2014-07-20", "2014-07-21", "2014-07-22", "2014-07-23", "2014-07-24", "2014-07-25", "2014-07-26", "2014-07-27", "2014-07-28", "2014-07-29", "2014-07-30", "2014-07-31", "2014-08-01", "2014-08-02", "2014-08-03", "2014-08-04", "2014-08-05", "2014-08-06", "2014-08-07", "2014-08-08", "2014-08-09", "2014-08-10", "2014-08-11", "2014-08-12", "2014-08-13", "2014-08-14", "2014-08-15", "2014-08-16", "2014-08-17", "2014-08-18", "2014-08-19", "2014-08-20", "2014-08-21", "2014-08-22", "2014-08-23", "2014-08-24", "2014-08-25", "2014-08-26", "2014-08-27", "2014-08-28", "2014-08-29", "2014-08-30", "2014-08-31", "2014-09-01", "2014-09-02", "2014-09-03", "2014-09-04", "2014-09-05", "2014-09-06", "2014-09-07", "2014-09-08", "2014-09-09", "2014-09-10", "2014-09-11", "2014-09-12", "2014-09-13", "2014-09-14", "2014-09-15", "2014-09-16", "2014-09-17", "2014-09-18", "2014-09-19", "2014-09-20", "2014-09-21", "2014-09-22", "2014-09-23", "2014-09-24", "2014-09-25", "2014-09-26", "2014-09-27", "2014-09-28", "2014-09-29", "2014-09-30", "2014-10-01", "2014-10-02", "2014-10-03", "2014-10-04", "2014-10-05", "2014-10-06", "2014-10-07", "2014-10-08", "2014-10-09", "2014-10-10", "2014-10-11", "2014-10-12", "2014-10-13", "2014-10-14", "2014-10-15", "2014-10-16", "2014-10-17", "2014-10-18", "2014-10-19", "2014-10-20", "2014-10-21", "2014-10-22", "2014-10-23", "2014-10-24", "2014-10-25", "2014-10-26", "2014-10-27", "2014-10-28", "2014-10-29", "2014-10-30", "2014-10-31", "2014-11-01", "2014-11-02", "2014-11-03", "2014-11-04", "2014-11-05", "2014-11-06", "2014-11-07", "2014-11-08", "2014-11-09", "2014-11-10", "2014-11-11", "2014-11-12", "2014-11-13", "2014-11-14", "2014-11-15", "2014-11-16", "2014-11-17", "2014-11-18", "2014-11-19", "2014-11-20", "2014-11-21", "2014-11-22", "2014-11-23", "2014-11-24", "2014-11-25", "2014-11-26", "2014-11-27", "2014-11-28", "2014-11-29", "2014-11-30", "2014-12-01", "2014-12-02", "2014-12-03", "2014-12-04", "2014-12-05", "2014-12-06", "2014-12-07", "2014-12-08", "2014-12-09", "2014-12-10", "2014-12-11", "2014-12-12", "2014-12-13", "2014-12-14", "2014-12-15", "2014-12-16", "2014-12-17", "2014-12-18", "2014-12-19", "2014-12-20", "2014-12-21", "2014-12-22", "2014-12-23", "2014-12-24", "2014-12-25", "2014-12-26", "2014-12-27", "2014-12-28", "2014-12-29", "2014-12-30", "2014-12-31", "2015-01-01", "2015-01-02", "2015-01-03", "2015-01-04", "2015-01-05", "2015-01-06", "2015-01-07", "2015-01-08", "2015-01-09", "2015-01-10", "2015-01-11", "2015-01-12", "2015-01-13", "2015-01-14", "2015-01-15", "2015-01-16", "2015-01-17", "2015-01-18", "2015-01-19", "2015-01-20", "2015-01-21", "2015-01-22", "2015-01-23", "2015-01-24", "2015-01-25", "2015-01-26", "2015-01-27", "2015-01-28", "2015-01-29", "2015-01-30", "2015-01-31", "2015-02-01", "2015-02-02", "2015-02-03", "2015-02-04", "2015-02-05", "2015-02-06", "2015-02-07", "2015-02-08", "2015-02-09", "2015-02-10", "2015-02-11", "2015-02-12", "2015-02-13", "2015-02-14", "2015-02-15", "2015-02-16", "2015-02-17", "2015-02-18", "2015-02-19", "2015-02-20", "2015-02-21", "2015-02-22", "2015-02-23", "2015-02-24", "2015-02-25", "2015-02-26", "2015-02-27", "2015-02-28", "2015-03-01", "2015-03-02", "2015-03-03", "2015-03-04", "2015-03-05", "2015-03-06", "2015-03-07", "2015-03-08", "2015-03-09", "2015-03-10", "2015-03-11", "2015-03-12", "2015-03-13", "2015-03-14", "2015-03-15", "2015-03-16", "2015-03-17", "2015-03-18", "2015-03-19", "2015-03-20", "2015-03-21", "2015-03-22", "2015-03-23", "2015-03-24", "2015-03-25", "2015-03-26", "2015-03-27", "2015-03-28", "2015-03-29", "2015-03-30", "2015-03-31", "2015-04-01", "2015-04-02", "2015-04-03", "2015-04-04", "2015-04-05", "2015-04-06", "2015-04-07", "2015-04-08", "2015-04-09", "2015-04-10", "2015-04-11", "2015-04-12", "2015-04-13", "2015-04-14", "2015-04-15", "2015-04-16", "2015-04-17", "2015-04-18", "2015-04-19", "2015-04-20", "2015-04-21", "2015-04-22", "2015-04-23", "2015-04-24", "2015-04-25", "2015-04-26", "2015-04-27", "2015-04-28", "2015-04-29", "2015-04-30", "2015-05-01", "2015-05-02", "2015-05-03", "2015-05-04", "2015-05-05", "2015-05-06", "2015-05-07", "2015-05-08", "2015-05-09", "2015-05-10", "2015-05-11", "2015-05-12", "2015-05-13", "2015-05-14", "2015-05-15", "2015-05-16", "2015-05-17", "2015-05-18", "2015-05-19", "2015-05-20", "2015-05-21", "2015-05-22", "2015-05-23", "2015-05-24", "2015-05-25", "2015-05-26", "2015-05-27", "2015-05-28", "2015-05-29", "2015-05-30", "2015-05-31", "2015-06-01", "2015-06-02", "2015-06-03", "2015-06-04", "2015-06-05", "2015-06-06", "2015-06-07", "2015-06-08", "2015-06-09", "2015-06-10", "2015-06-11", "2015-06-12", "2015-06-13", "2015-06-14", "2015-06-15", "2015-06-16", "2015-06-17", "2015-06-18", "2015-06-19", "2015-06-20", "2015-06-21", "2015-06-22", "2015-06-23", "2015-06-24", "2015-06-25", "2015-06-26", "2015-06-27", "2015-06-28", "2015-06-29", "2015-06-30", "2015-07-01", "2015-07-02", "2015-07-03", "2015-07-04", "2015-07-05", "2015-07-06", "2015-07-07", "2015-07-08", "2015-07-09", "2015-07-10", "2015-07-11", "2015-07-12", "2015-07-13", "2015-07-14", "2015-07-15", "2015-07-16", "2015-07-17", "2015-07-18", "2015-07-19", "2015-07-20", "2015-07-21", "2015-07-22", "2015-07-23", "2015-07-24", "2015-07-25", "2015-07-26", "2015-07-27", "2015-07-28", "2015-07-29", "2015-07-30", "2015-07-31", "2015-08-01", "2015-08-02", "2015-08-03", "2015-08-04", "2015-08-05", "2015-08-06", "2015-08-07", "2015-08-08", "2015-08-09", "2015-08-10", "2015-08-11", "2015-08-12", "2015-08-13", "2015-08-14", "2015-08-15", "2015-08-16", "2015-08-17", "2015-08-18", "2015-08-19", "2015-08-20", "2015-08-21", "2015-08-22", "2015-08-23", "2015-08-24", "2015-08-25", "2015-08-26", "2015-08-27", "2015-08-28", "2015-08-29", "2015-08-30", "2015-08-31", "2015-09-01", "2015-09-02", "2015-09-03", "2015-09-04", "2015-09-05", "2015-09-06", "2015-09-07", "2015-09-08", "2015-09-09", "2015-09-10", "2015-09-11", "2015-09-12", "2015-09-13", "2015-09-14", "2015-09-15", "2015-09-16", "2015-09-17", "2015-09-18", "2015-09-19", "2015-09-20", "2015-09-21", "2015-09-22", "2015-09-23", "2015-09-24", "2015-09-25", "2015-09-26", "2015-09-27", "2015-09-28", "2015-09-29", "2015-09-30", "2015-10-01", "2015-10-02", "2015-10-03", "2015-10-04", "2015-10-05", "2015-10-06", "2015-10-07", "2015-10-08", "2015-10-09", "2015-10-10", "2015-10-11", "2015-10-12", "2015-10-13", "2015-10-14", "2015-10-15", "2015-10-16", "2015-10-17", "2015-10-18", "2015-10-19", "2015-10-20", "2015-10-21", "2015-10-22", "2015-10-23", "2015-10-24", "2015-10-25", "2015-10-26", "2015-10-27", "2015-10-28", "2015-10-29", "2015-10-30", "2015-10-31", "2015-11-01", "2015-11-02", "2015-11-03", "2015-11-04", "2015-11-05", "2015-11-06", "2015-11-07", "2015-11-08", "2015-11-09", "2015-11-10", "2015-11-11", "2015-11-12", "2015-11-13", "2015-11-14", "2015-11-15", "2015-11-16", "2015-11-17", "2015-11-18", "2015-11-19", "2015-11-20", "2015-11-21", "2015-11-22", "2015-11-23", "2015-11-24", "2015-11-25", "2015-11-26", "2015-11-27", "2015-11-28", "2015-11-29", "2015-11-30", "2015-12-01", "2015-12-02", "2015-12-03", "2015-12-04", "2015-12-05", "2015-12-06", "2015-12-07", "2015-12-08", "2015-12-09", "2015-12-10", "2015-12-11", "2015-12-12", "2015-12-13", "2015-12-14", "2015-12-15", "2015-12-16", "2015-12-17", "2015-12-18", "2015-12-19", "2015-12-20", "2015-12-21", "2015-12-22", "2015-12-23", "2015-12-24", "2015-12-25", "2015-12-26", "2015-12-27", "2015-12-28", "2015-12-29", "2015-12-30", "2015-12-31"],
+                    datasets: [{
+                        label: 'Daily Revenue (USD)',
+                        data: [99650.40239988679, 92291.66732282797, 74278.69729282166, 86604.26824490415, 94057.38784471371, 98180.92064164528, 106337.48165213467, 91986.10758751676, 93395.4909095107, 88208.72221322068, 74599.4565442031, 88717.08618057513, 109461.33902287406, 95659.74735434716, 86450.33745688021, 94473.11641120784, 102811.81658162164, 102643.01844291762, 89591.49732163685, 91316.77590591552, 114117.68740087675, 92546.47122843639, 100302.63006874798, 188027.76851250423, 83010.1797770664, 108243.73763656309, 90477.09232350263, 107211.89179101797, 92383.85336886157, 105211.24472957265, 97192.18204135967, 114116.73880145451, 97821.93011078304, 101448.30750035333, 111064.21993839805, 111715.89032292685, 117296.49871487617, 111944.00702626862, 90470.63885146877, 116914.8067727861, 107062.91719498657, 106908.69741059875, 112022.30047693412, 102426.34654706037, 101070.19056242521, 84503.99610413217, 93456.69263974622, 105924.35482466288, 117115.10324329056, 104025.06636590521, 116507.08735766905, 117596.11388418605, 108670.17258185224, 100722.77533633205, 105614.35669261967, 115766.09146818951, 127144.46080852185, 92425.73310168447, 107531.7961170995, 104042.42960711534, 100179.72237298187, 103584.33372034627, 98754.92714126223, 123411.97785295527, 124018.26622120172, 106170.87845782175, 96462.74352415209, 114926.81547211629, 142516.78440196812, 110723.7407617563, 125311.2066225562, 124650.75165313345, 113770.58220930243, 111507.7941767917, 93730.30142633744, 112824.40382910201, 116678.88257272307, 115168.99666254439, 130998.6677026606, 109929.64461897268, 112699.35474239074, 117424.25938047578, 127157.46262463453, 123529.49612177741, 105624.49217085686, 106842.55376656832, 128266.14464417039, 112369.29050248835, 103686.60368079177, 124526.42406657126, 220172.6740399643, 105731.92835365357, 117852.23099205409, 130191.78582592061, 111542.11700293543, 105815.74064453926, 127847.53277764459, 98690.6022505623, 125766.41382248541, 102855.53268821629, 116922.9122516135, 118655.78116202609, 92377.51514583666, 111721.8266931264, 128186.03933160122, 122816.45283958018, 125714.23581881424, 122204.70047195214, 107714.22177800177, 95820.95656663323, 105285.11018108313, 113868.16247709352, 114827.40209476625, 123232.30307145027, 116658.49033884355, 115752.11635781368, 104165.31976830994, 121492.49239924272, 135992.91974697378, 127282.16943608622, 111456.85370986462, 113363.23574563945, 125290.72621940235, 89357.12970898858, 104307.76189635057, 127526.35202988538, 99781.84804009995, 108088.2336123463, 143234.1718180976, 96702.14272849602, 84666.8283248213, 117659.6298270948, 103963.82215702943, 101639.11223789626, 110240.50842113394, 111243.5844070036, 95682.36591943461, 82474.864001331, 105521.80905897466, 106866.72658047502, 120728.62572366698, 138483.31272668403, 103305.2640451727, 104581.06073570618, 108986.08878311081, 120368.16496380053, 109084.23411804737, 102473.99108283242, 116871.18596162496, 110556.176978503, 107501.47983486929, 96334.80650391728, 122336.5133424214, 109017.24975362753, 116617.16589056437, 95560.35416723596, 119983.91475502089, 98999.42084245083, 83630.78152144118, 96535.20396455887, 93545.76899725273, 98503.24234818398, 108821.00788728405, 106636.40134349898, 90264.22495150739, 86746.86372441969, 102146.63618126375, 127352.54846031732, 84738.73193056036, 107949.45577961081, 102263.75591202175, 91443.06126588158, 82090.56975297704, 98719.34750573766, 116596.50876932517, 100518.92332017138, 105517.2289035203, 78901.23992357308, 82810.89174316642, 100019.64556432402, 97624.32571309131, 84652.02950982886, 91095.74432645751, 104531.52721621316, 98189.53173170761, 85399.24098111698, 84357.02565015537, 80493.33362504307, 83250.06053467088, 83667.7749392714, 92983.90121331494, 98656.75549887006, 86131.82077420643, 91390.58294109664, 90758.6374637257, 92751.8499729621, 81174.88212882544, 111532.19725959092, 82186.66775330857, 85147.82368183436, 73968.1525811839, 94181.47562327074, 97381.82493737416, 98647.20183105038, 79478.63821554114, 88297.80660432254, 88451.1587119124, 89485.19422693203, 104830.90420636038, 93774.57207626585, 101317.30285492486, 86962.54823183341, 73913.39866379516, 94781.6439130761, 89332.7322616796, 91043.02821519888, 82471.95201468386, 59039.089225649754, 76307.40118783123, 89245.06983383678, 80197.34759342868, 73906.09031352129, 92257.95775829237, 101166.47213070598, 90113.12855062228, 81249.23834095031, 82053.01839184006, 57954.262602335875, 69542.9415962505, 83983.02967989944, 81046.90645146152, 72986.90039101389, 84457.68409453638, 91154.88636138884, 81793.3628585918, 79674.99764362641, 74049.24963688852, 95919.47264233447, 78143.78718209304, 87587.18023200808, 77951.36168851165, 66506.6815184929, 70806.92608083354, 83987.39615101687, 77699.8388832675, 83080.29562795741, 70497.05936567765, 79057.90999945928, 74166.09986165662, 64493.729759871414, 52990.44767298226, 73691.9904669485, 85383.8639421203, 89395.18198366486, 75201.87690443192, 76852.0414089077, 79344.85089253436, 79755.96750615467, 85956.88564454814, 83699.62628150113, 78466.26288928078, 89502.4706545503, 129615.69587521587, 66189.24906896913, 90223.86996485261, 88841.38385412734, 80988.00654259337, 74028.3338045167, 81732.88014727809, 66673.31578251235, 74303.12631478705, 79047.41190139668, 96581.75341412675, 78446.06415924188, 86526.91831193467, 83991.24712951442, 51876.83904136771, 62853.538755450034, 75570.06295557375, 77941.04508584521, 79271.71663531283, 82662.59381238659, 82714.40719686284, 66578.3050370255, 92538.90951486582, 65849.29963782051, 79473.14564475483, 83092.98802001344, 85816.14175246796, 80077.28075792933, 68156.85824213529, 80586.5145690229, 74407.51674837155, 100679.52247284683, 89162.02901105995, 84063.77654126097, 78706.48756225612, 59366.27672012883, 76508.87845861753, 85596.84533338358, 66610.94211015746, 82800.57189099354, 97098.72632723549, 74393.44907884952, 52085.30867939661, 76549.36019683129, 88204.15105055833, 81738.17213588189, 89804.32204579248, 71943.8228990995, 85177.76950237114, 88533.32793516458, 78264.80545658163, 86443.56619002638, 93803.79068132145, 79622.12061764528, 98571.15198320507, 83413.01289257653, 71795.7594046345, 86343.22572404923, 78507.82914253036, 82790.8698728999, 84846.74652974907, 105795.80618335729, 73160.63645696871, 56674.24239028989, 76821.41302105106, 74537.17199326027, 97256.45308856684, 81769.72789028287, 84779.87476541109, 87740.18302636799, 70818.96736938745, 65452.11265428124, 92664.66168938582, 93797.52869431207, 69518.02061811641, 89993.69987801721, 99973.34615591809, 71257.7726048205, 80803.64798171894, 108460.38944858465, 94903.81604742022, 94011.62328479622, 93375.8691018026, 87060.5210412766, 80586.20202037632, 100851.09409146708, 93728.79221089436, 94688.62517673474, 93717.78539353107, 99456.30154766765, 105756.71562486736, 79959.47719188154, 93326.81640758236, 101523.04560695363, 88648.49246879708, 97900.90204996573, 109344.12698237551, 94972.63250725983, 102455.03868587612, 106510.0481107208, 101597.40209763504, 95060.5372934593, 97361.2257716593, 83711.18039457173, 112669.00038310063, 91915.80234534394, 96471.28801708645, 105587.2333502716, 109199.35344652782, 104696.5031817744, 219664.72707848423, 123151.54847857582, 112270.90920749374, 71438.77435253056, 118573.74201810626, 100342.70720846574, 125122.15611475414, 102662.83010717595, 101642.77150522791, 102829.41069760085, 91832.62366188728, 120144.28748962363, 123787.25668796992, 132191.0863726095, 100415.06621112423, 102522.57216069754, 93243.31240941853, 86563.41213733936, 101265.02489955154, 114462.35967835964, 116046.55900346818, 120428.65882770241, 116143.39237208177, 96537.8385641816, 95927.74954595903, 132734.61962961216, 104217.73763344693, 125923.92711044344, 98178.7899105067, 105422.81819462584, 107124.0135754146, 112410.85147635118, 111972.2187156774, 131627.64734305616, 113258.81927727009, 116560.69123948617, 111461.76079312529, 92457.96318017672, 113965.06958141306, 107721.63587294379, 110205.422858573, 139220.89823043087, 113475.6006564762, 110434.12497226268, 121223.90361720618, 215350.5226367802, 112860.13439231423, 112563.9502830839, 116202.60307855671, 132813.58611315303, 146019.41168389205, 134946.89498144586, 123882.30371719893, 124515.65224450866, 113584.15412746476, 118733.13457025988, 115264.49574945628, 106896.7151406876, 87049.11003996186, 119265.86275128613, 114368.80892272074, 116521.82740933883, 140963.1741092716, 129873.09588893571, 133846.54190004882, 109440.84012516256, 117464.99471935727, 135424.58499084352, 123484.19598138548, 115591.33812145855, 108034.13903942361, 123209.38490504373, 103767.40166066863, 128418.14901527605, 117559.9891405848, 123019.1919377741, 113725.38813853114, 107214.8812571374, 119765.94196963847, 114327.65805802669, 105669.09632805195, 124536.63543494014, 112854.89378579326, 114912.01889922167, 250791.74466279568, 119919.57197918942, 95482.55207289901, 99060.57944152482, 130925.5675089986, 115847.4572957267, 124062.62230660804, 131077.48665482388, 122942.99454308442, 94999.48897135553, 116438.11472219246, 130598.81512501143, 127145.26793872663, 127257.26731514344, 263133.77147753345, 114774.1226696866, 103692.23785718853, 111454.84298460693, 151322.1377135761, 124965.08428641644, 125260.41430602613, 135319.01801031432, 148798.30249063554, 115730.70500508665, 106201.25715651964, 115115.39522295988, 121301.26089062062, 123913.54067967192, 110646.82267771362, 109855.0780094396, 107819.70884181673, 115916.6336748492, 263883.7730656314, 124074.1353863187, 110595.61163185534, 122150.91843535306, 122997.5416289345, 90615.88946633559, 123541.60139241471, 124399.21924850126, 114305.34154063583, 115560.75262581122, 108874.6355651525, 100095.84505677121, 115556.46119682555, 125193.67534403925, 120686.13988905132, 139420.6534206841, 113801.16906898939, 115259.52586594557, 118012.12701891124, 111829.41351256426, 108896.02959456883, 113949.26803216046, 102697.63648392168, 107655.58764282381, 104702.19277715002, 119332.3664760417, 89394.72711343711, 122055.90760451088, 114217.71321746497, 108128.89721028053, 126647.1657675338, 116074.07853438651, 107769.4263954227, 114987.40830916377, 97939.38937028097, 116707.65950678033, 115850.74388687535, 99799.19955433671, 111365.29631367639, 113934.24102696369, 114772.15964023043, 94513.01027871852, 113816.9559394639, 101042.58021835698, 108163.65205524983, 101801.04355875932, 132753.79876687532, 98875.20432971891, 92080.19037387006, 107591.0285546362, 128467.76301498683, 102900.48271031604, 113264.11492799678, 95622.77111111063, 93029.02296163327, 104047.02892492145, 100010.97008397216, 83094.27572356534, 105452.00486317233, 115797.24508165446, 102375.22120625136, 99779.89320664862, 92096.8609616544, 85113.75718017975, 118271.07833290716, 99223.88595209374, 101068.71348069218, 81249.82996983995, 99117.35730561422, 95052.64126749283, 90906.46555812728, 99026.65686600287, 104739.04688654476, 107847.84529034446, 110272.88496382421, 81496.82578670212, 104687.96448963908, 111260.2758156946, 94979.81663553657, 104606.13885112725, 96786.9074630334, 105266.21549902164, 86741.65889816666, 96463.56105441607, 104751.80044327627, 82198.50403564468, 94313.5922712846, 92149.27711254067, 103880.4393196814, 92950.34178467664, 77446.47997991399, 103371.65107916888, 107654.9072085799, 89611.97501127914, 104720.54612602845, 107266.29812474707, 87588.96485091369, 86813.74869895243, 74960.46666825454, 94673.6472805322, 89174.67935786297, 96139.6022827997, 95427.24949098229, 68654.6893919636, 96218.63262234643, 83233.31724044422, 94836.3003584172, 78065.85460979288, 91030.655539388, 89841.11890783082, 87326.74610499703, 73342.77457397518, 108447.46581463289, 86113.64335205565, 95310.57422251358, 83246.76106727918, 80813.52314960757, 78967.27570327267, 85885.76372774159, 86472.15165903466, 150112.91870427714, 91606.46149389888, 91317.76024414234, 106684.14453028912, 84792.87674387511, 61230.2661293344, 97672.20668944935, 92168.64087110563, 78977.61202870029, 74192.08844801111, 100409.51672069932, 77928.75715572652, 81055.65448271588, 88050.49778211759, 108499.77840953089, 84542.27841508933, 82666.56603406007, 72043.13568677391, 75925.53523754436, 73855.51982469871, 100087.19694534625, 96875.47725413449, 74585.33142455155, 81827.01073741635, 94913.53501252687, 85673.8828529909, 59472.288621950116, 93476.83671035574, 106070.51286957851, 72300.40942517336, 87638.3592162653, 66415.41914448777, 82874.85126193949, 83309.00116723552, 86710.72218619316, 80686.46530711638, 93623.30539232842, 94985.80046494715, 85118.73477196938, 74865.73861983944, 91290.41032785359, 89665.54028591156, 101122.15604729977, 84622.35000934162, 85861.6800117003, 84195.68061107089, 95277.86797500697, 79584.99289779716, 89389.95777594572, 86025.77864509316, 89251.92169925307, 109255.30614710726, 86514.03685777949, 62164.58753523661, 73923.26863950522, 89063.4139689464, 96477.51601564838, 99987.09120916518, 79843.75775005376, 85878.9434993532, 69228.0627162395, 87975.85200613813, 86115.83355295804, 98803.80633478265, 80893.0458799525, 92610.32695674115, 80776.92743480734, 81232.39853555142, 62881.24492269472, 90987.95376929422, 87822.76294514927, 87544.66474387224, 85828.13363122883, 91905.54434926741, 67178.5396341416, 93817.52049487487, 94240.99247064909, 96937.34817351872, 201997.74560577003, 103034.99001034214, 109294.55148388451, 96001.11651027188, 96786.14000332917, 109533.0412212483, 98298.16824965813, 96328.98301873327, 106038.96896118038, 107035.46489502995, 93719.07266152746, 95326.28345960368, 110474.26849374922, 109547.29886647055, 109182.40909597826, 103058.72550875117, 88974.3575453993, 85079.91489627399, 88941.35509923405, 102669.80604030829, 102706.37231544066, 99075.9628126845, 99605.07310089507, 108533.49224527567, 87496.27563063653, 88770.76652478517, 98659.94348051494, 97664.34252472024, 108185.04189233256, 108336.31024525633, 98993.70656776206, 96344.73101101998, 90130.12089724367, 111036.38361730684, 107580.46434869361, 90539.62393692389, 95693.28352530277, 107674.07489842884, 97004.54713639941, 101058.86658536315, 115913.3397289997, 113352.20273131019, 104245.44673130756, 119349.25841170727],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 2,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Daily Revenue Trend - DATA3'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Revenue: $' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxTicksLimit: 10
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
